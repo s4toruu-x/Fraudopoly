@@ -1,0 +1,12 @@
+// Fraudopoly on Cloudflare Workers: a static site, served from the Vite build in dist/.
+// Deploy with `npm run deploy` (`npx wrangler login` once first).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fraudopoly",
+  "compatibility_date": "2026-10-20",
+  "assets": {
+    "directory": "./dist",
+    // Pages are in the URL hash, so any other path is a mistyped link: send the game
+    "not_found_handling": "single-page-application"
+  }
+}
