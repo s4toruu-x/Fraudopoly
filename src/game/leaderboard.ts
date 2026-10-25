@@ -8,6 +8,8 @@ export interface Place {
   /** The sum of their names' prices, in Fraudbucks */
   value: number;
   fraudbucks: number;
+  /** Fraudbucks plus what their frauds are worth; the Fraudbucks board ranks by this */
+  netWorth: number;
   isMe: boolean;
 }
 
@@ -27,6 +29,7 @@ export interface Profile {
   names: number;
   value: number;
   fraudbucks: number;
+  netWorth: number;
   collectionRank: number | null;
   fraudbucksRank: number | null;
   isMe: boolean;
@@ -45,6 +48,8 @@ function toPlace(p: Record<string, unknown>): Place {
     names: p.names as number,
     value: p.value as number,
     fraudbucks: (p.fraudbucks as number | undefined) ?? 0,
+    // Older servers rank by the balance alone
+    netWorth: (p.net_worth as number | undefined) ?? (p.fraudbucks as number | undefined) ?? 0,
     isMe: p.is_me as boolean,
   };
 }
@@ -76,6 +81,7 @@ export async function fetchProfile(username: string): Promise<Result<Profile | n
       names: p.names as number,
       value: p.value as number,
       fraudbucks: p.fraudbucks as number,
+      netWorth: (p.net_worth as number | undefined) ?? (p.fraudbucks as number) + (p.value as number),
       collectionRank: (p.collection_rank as number | null) ?? null,
       fraudbucksRank: (p.fraudbucks_rank as number | null) ?? null,
       isMe: p.is_me as boolean,

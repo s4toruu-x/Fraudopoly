@@ -154,6 +154,23 @@ export const actions = {
     return null;
   },
 
+  /** Sells an owned fraud for its price. Returns why the server refused, if it did. */
+  sell: async (entry: Entry): Promise<{ error: string } | null> => {
+    if (!supabase) return { error: "The game has no server." };
+    const { data, error } = await supabase.rpc("sell", { card: entry.id });
+    if (error) {
+      void refresh();
+      return { error: explain(error.message) };
+    }
+    set({
+      entries: state.entries.map((other) =>
+        other.position === entry.position ? { ...other, count: 0, foundAt: null } : other,
+      ),
+      player: toPlayer(data.player),
+    });
+    return null;
+  },
+
   claim: async (pullId: number): Promise<{ error: string } | null> => {
     if (!supabase) return { error: "The game has no server." };
     const { data, error } = await supabase.rpc("claim", { pull: pullId });

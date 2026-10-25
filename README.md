@@ -64,6 +64,11 @@ tables and functions have their own names.
      missing.
    - `20261105120000_wishlist.sql`: wishlists. Until it's run, the wishlist
      button and filter don't show.
+   - `20261106120000_net_worth.sql`: the Fraudbucks leaderboard ranks by net
+     worth (Fraudbucks plus what your frauds are worth) instead of the
+     balance. Until it's run, it ranks by the balance.
+   - `20261107120000_sell.sql`: selling a fraud for its price. Until it's run,
+     the Sell button says its function is missing.
 3. **Guests.** Under **Authentication > Sign In / Providers**, turn on **Allow
    anonymous sign-ins**. Every visitor without an account plays as an
    anonymous user.
@@ -179,7 +184,9 @@ taken out of the list leaves the game and every collection.
   doesn't add a copy: it pays F$10, F$25, F$60 or F$200 by rarity instead. A
   new name pays nothing. The balance shows in the header, and the payouts are
   in `duplicate_rewards()` in the Fraudbucks migration. Only the server
-  changes it. There's nothing to spend them on yet.
+  changes it. A fraud you own can be sold for its price from its details
+  (`sell`, with a second click to confirm); it leaves the collection, so it
+  counts as new when pulled again.
 - **Latest pulls and claims.** Under the pull panel, two lists (`get_feed`):
   "Your latest pulls", the player's own 20 newest pulls with whether each
   was claimed and what a duplicate paid, and "Latest claims", the 20 newest
@@ -224,9 +231,9 @@ taken out of the list leaves the game and every collection.
 - **Leaderboards.** Two, switched at the top of the page (`get_leaderboard`):
   **Collection**, the 20 players whose frauds are worth the most (the sum of
   their prices), with how many frauds they have, and **Fraudbucks**, the 20
-  with the biggest balance. Your own place shows under the 20 when you aren't
-  in it, and the collection board starts with your rank and how many frauds
-  you have. Only players with an account are ranked, and nobody at zero.
+  with the highest net worth: the Fraudbucks they hold plus what their frauds
+  are worth, with the balance shown beside it. Your own place shows under the 20 when you aren't
+  in it. Only players with an account are ranked, and nobody at zero.
   The page checks again every 30 seconds.
 - **Wishlist.** Up to 5 names you don't have (`wishlist_limit()` in the
   wishlist migration), added and removed from a name's details (`set_wish`).

@@ -11,6 +11,9 @@ import { Stars } from "./Rarity";
 /** Upper bound on waiting for the 0.14s closing animation */
 const CLOSE_FALLBACK_MS = 400;
 
+/** How long a sale waits for its confirm click; the countdown bar in index.css runs this long */
+const SELL_CONFIRM_MS = 4000;
+
 interface Props {
   entry: Entry;
   rules: Rules;
@@ -24,6 +27,8 @@ export function NameDetails({ entry, rules, entries, owner, onClose }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const closing = useRef(false);
   const owned = entry.count > 0;
+  // What the fraud just sold for, while this stays open
+  const [soldFor, setSoldFor] = useState<number | null>(null);
 
   useEffect(() => {
     // React's development double run would open it twice
@@ -56,7 +61,14 @@ export function NameDetails({ entry, rules, entries, owner, onClose }: Props) {
       onClick={(event) => event.target === dialog.current && close()}
     >
       <div className="flex flex-col items-center gap-5 p-5 sm:flex-row sm:items-start sm:p-6">
-        <NameCard name={entry.name} rarity={entry.rarity} owned={owned} className="w-36 shrink-0 sm:w-40" />
+        <div className="relative w-36 shrink-0 sm:w-40">
+          <NameCard name={entry.name} rarity={entry.rarity} owned={owned} />
+          {soldFor !== null && !owned && (
+            <div aria-hidden className="sold-stamp">
+              <span>Sold</span>
+            </div>
+          )}
+        </div>
         <div className="flex w-full min-w-0 flex-col gap-4">
           <div className="flex flex-col gap-1 text-center sm:text-left">
             <h2 id="details-title" className="text-xl font-semibold [overflow-wrap:anywhere]">
@@ -94,6 +106,17 @@ export function NameDetails({ entry, rules, entries, owner, onClose }: Props) {
         {!owner && !owned && rules.wishlistLimit > 0 && (
           <WishButton entry={entry} entries={entries} limit={rules.wishlistLimit} />
         )}
+        {!owner && owned && entry.price !== null && (
+          <SellButton entry={entry} price={entry.price} onSold={setSoldFor} />
+        )}
+        {soldFor !== null && !owned && (
+          <p role="status" className="sold-note mr-auto">
+            <svg aria-hidden viewBox="0 0 16 16" className="size-4">
+              <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Sold for {formatMoney(soldFor)}
+          </p>
+        )}
         <Button variant="outline" autoFocus onClick={close}>
           Close
         </Button>
@@ -129,6 +152,53 @@ function WishButton({ entry, entries, limit }: { entry: Entry; entries: Entry[];
           {entry.wished ? "♥" : "♡"}
         </span>
         {entry.wished ? "Remove from wishlist" : full ? `Wishlist full · ${count}/${limit}` : `Add to wishlist · ${count}/${limit}`}
+      </Button>
+    </>
+  );
+}
+
+/** Sells the fraud for its price, after a second click to confirm */
+function SellButton({ entry, price, onSold }: { entry: Entry; price: number; onSold: (price: number) => void }) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // An unconfirmed sale goes back to the plain button
+  useEffect(() => {
+    if (!confirming) return;
+    const timer = setTimeout(() => setConfirming(false), SELL_CONFIRM_MS);
+    return () => clearTimeout(timer);
+  }, [confirming]);
+
+  const click = async () => {
+    if (!confirming) {
+      setConfirming(true);
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    const refused = await actions.sell(entry);
+    setBusy(false);
+    setConfirming(false);
+    if (refused) setError(refused.error);
+    else onSold(price);
+  };
+
+  return (
+    <>
+      {error && (
+        <p role="alert" className="mr-auto text-sm text-danger">
+          {error}
+        </p>
+      )}
+      <Button
+        variant={confirming ? "default" : "outline"}
+        disabled={busy}
+        onClick={click}
+        className={confirming ? "sell-confirm mr-auto tabular-nums" : "mr-auto tabular-nums"}
+      >
+        {busy ? "Selling…" : confirming ? `Confirm sale · ${formatMoney(price)}` : `Sell for ${formatMoney(price)}`}
+        {confirming && !busy && <span aria-hidden className="sell-countdown" />}
       </Button>
     </>
   );

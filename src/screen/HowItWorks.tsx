@@ -56,6 +56,8 @@ export function HowItWorks({ rules }: { rules: Rules }) {
           You have one of each name. {rules.claimsPerHour > 0 ? "Claiming" : "Pulling"} a name you already
           have gives {CURRENCY.name} instead:{" "}
           {RARITIES.map((rarity, i) => `${formatMoney(rules.duplicateRewards[i])} for ${rarity.name}`).join(", ")}.
+          You can also sell a fraud you own for its price, from its details; it leaves your
+          collection, so pulling it again counts as new.
         </p>
       </Part>
 

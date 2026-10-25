@@ -199,7 +199,11 @@
         user-select: none;
         border-radius: 10px;
         font-weight: 600;
-        transition: opacity 0.15s;
+        transition:
+            opacity 0.15s,
+            background-color 0.2s,
+            color 0.2s,
+            border-color 0.2s;
     }
     .btn:hover {
         opacity: 0.88;
@@ -539,6 +543,7 @@
         border-radius: 10px;
         background: var(--r-bg);
         overflow: hidden;
+        transition: background-color 0.4s;
     }
     .name-card .initial {
         font-size: 44cqw;
@@ -605,11 +610,124 @@
     }
 }
 
+/* Selling and money: the confirm countdown, the "Sold" stamp, and the balance taking in a gain */
+@layer components {
+    .sell-confirm {
+        position: relative;
+        overflow: hidden;
+    }
+    /* Runs down the seconds left to confirm (SELL_CONFIRM_MS in NameDetails) */
+    .sell-countdown {
+        position: absolute;
+        inset-inline: 0;
+        bottom: 0;
+        height: 3px;
+        background: currentColor;
+        opacity: 0.4;
+        transform-origin: left;
+        animation: sell-countdown 4s linear forwards;
+    }
+    @keyframes sell-countdown {
+        to {
+            transform: scaleX(0);
+        }
+    }
+
+    .sold-stamp {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+    }
+    .sold-stamp > span {
+        padding: 4px 12px;
+        border: 3px solid var(--stars);
+        border-radius: 8px;
+        color: var(--stars);
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transform: rotate(-12deg);
+        animation: sold-stamp 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.3) both;
+    }
+    @keyframes sold-stamp {
+        from {
+            opacity: 0;
+            transform: rotate(-12deg) scale(1.8);
+        }
+    }
+
+    .sold-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--stars);
+        animation: fade-up 0.3s ease-out both;
+    }
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+    }
+
+    .balance {
+        position: relative;
+    }
+    .balance-amount.bump {
+        display: inline-block;
+        animation: balance-bump 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.4);
+    }
+    @keyframes balance-bump {
+        40% {
+            transform: scale(1.2);
+        }
+    }
+    /* "+F$60" drifting down from the balance and fading */
+    .money-float {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-top: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        color: var(--stars);
+        pointer-events: none;
+        animation: money-float 1.4s ease-out forwards;
+    }
+    @keyframes money-float {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -4px);
+        }
+        15% {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+            transform: translate(-50%, 14px);
+        }
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .flip-inner,
     .details,
-    .details::backdrop {
+    .details::backdrop,
+    .sell-countdown,
+    .sold-stamp > span,
+    .sold-note,
+    .balance-amount.bump {
         animation: none;
+    }
+    /* Without its fade it would never leave */
+    .money-float {
+        display: none;
     }
     .menu,
     .menu[data-open] {

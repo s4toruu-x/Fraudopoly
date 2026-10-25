@@ -67,10 +67,11 @@ export function Profile({ username, entries, rules }: { username: string; entrie
             {profile.isMe && <span className="text-base font-normal text-muted-foreground"> (you)</span>}
           </h2>
         </div>
-        <dl className="grid grid-cols-3 gap-3">
+        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Frauds" value={String(profile.names)} note={`of ${entries.length}`} />
           <Stat label="Worth" value={formatMoney(profile.value)} note={place(profile.collectionRank)} money />
-          <Stat label={CURRENCY.name} value={formatMoney(profile.fraudbucks)} note={place(profile.fraudbucksRank)} money />
+          <Stat label={CURRENCY.name} value={formatMoney(profile.fraudbucks)} note="In hand" money />
+          <Stat label="Net worth" value={formatMoney(profile.netWorth)} note={place(profile.fraudbucksRank)} money />
         </dl>
       </section>
 

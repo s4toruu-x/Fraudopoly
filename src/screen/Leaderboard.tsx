@@ -37,7 +37,6 @@ export function Leaderboard() {
   }, [load]);
 
   const board = boards?.[kind];
-  const mine = boards?.collection.me;
 
   return (
     <section aria-labelledby="leaderboard-title" className="flex flex-col gap-4">
@@ -51,22 +50,6 @@ export function Leaderboard() {
           </button>
         ))}
       </div>
-
-      {kind === "collection" && account.status === "signed-in" && boards && (
-        <p className="panel px-5 py-3 text-sm">
-          {mine ? (
-            <>
-              You're <span className="font-semibold">#{mine.rank}</span> with{" "}
-              <span className="font-semibold">
-                {mine.names} {mine.names === 1 ? "fraud" : "frauds"}
-              </span>
-              , worth <span className="font-semibold text-stars">{formatMoney(mine.value)}</span>.
-            </>
-          ) : (
-            "You have no frauds yet. Claim one to get on the board."
-          )}
-        </p>
-      )}
 
       {error && (
         <p role="alert" className="text-sm text-danger">
@@ -112,7 +95,10 @@ function Table({ board, kind }: { board: Board; kind: Kind }) {
                 <th className="text-right">Worth</th>
               </>
             ) : (
-              <th className="text-right">{CURRENCY.name}</th>
+              <>
+                <th className="text-right">{CURRENCY.name}</th>
+                <th className="text-right">Net worth</th>
+              </>
             )}
           </tr>
         </thead>
@@ -123,7 +109,7 @@ function Table({ board, kind }: { board: Board; kind: Kind }) {
           {mine && (
             <>
               <tr aria-hidden>
-                <td colSpan={kind === "collection" ? 4 : 3} className="text-center text-muted-foreground">
+                <td colSpan={4} className="text-center text-muted-foreground">
                   …
                 </td>
               </tr>
@@ -152,7 +138,10 @@ function Row({ place, kind }: { place: Place; kind: Kind }) {
           <td className="text-right text-stars tabular-nums">{formatMoney(place.value)}</td>
         </>
       ) : (
-        <td className="text-right text-stars tabular-nums">{formatMoney(place.fraudbucks)}</td>
+        <>
+          <td className="text-right tabular-nums">{formatMoney(place.fraudbucks)}</td>
+          <td className="text-right text-stars tabular-nums">{formatMoney(place.netWorth)}</td>
+        </>
       )}
     </tr>
   );

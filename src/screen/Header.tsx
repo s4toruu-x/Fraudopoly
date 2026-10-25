@@ -54,12 +54,7 @@ export function Header({ route }: { route: Route }) {
           Fraudopoly
         </a>
         <div className="flex min-w-0 items-center gap-2">
-          {game.player && (
-            <p title={CURRENCY.name} className="balance">
-              {formatMoney(game.player.fraudbucks)}
-              <span className="sr-only"> {CURRENCY.name}</span>
-            </p>
-          )}
+          {game.player && <Balance amount={game.player.fraudbucks} />}
           <ThemeSwitch className="hidden sm:inline-flex" />
           {account.status !== "off" && (
             <a
@@ -127,6 +122,52 @@ export function Header({ route }: { route: Route }) {
         <ThemeSwitch className="w-full [&>button]:flex-1" />
       </div>
     </header>
+  );
+}
+
+/** How long the balance takes to count up or down to a new amount */
+const COUNT_MS = 600;
+
+/** The player's Fraudbucks. A change counts up to the new amount, and a gain floats off it. */
+function Balance({ amount }: { amount: number }) {
+  const [shown, setShown] = useState(amount);
+  const [gain, setGain] = useState<{ id: number; value: number } | null>(null);
+  const previous = useRef(amount);
+
+  useEffect(() => {
+    const from = previous.current;
+    previous.current = amount;
+    if (amount === from) return;
+    if (amount > from) setGain({ id: Date.now(), value: amount - from });
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(amount);
+      return;
+    }
+    const start = performance.now();
+    let frame = 0;
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / COUNT_MS);
+      const eased = 1 - (1 - progress) ** 3;
+      setShown(Math.round(from + (amount - from) * eased));
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [amount]);
+
+  return (
+    <p title={CURRENCY.name} className="balance">
+      {/* Keyed by the gain, so the bump plays again for each one */}
+      <span key={gain?.id ?? 0} className={cn("balance-amount tabular-nums", gain && "bump")}>
+        {formatMoney(shown)}
+      </span>
+      <span className="sr-only"> {CURRENCY.name}</span>
+      {gain && (
+        <span key={`float-${gain.id}`} aria-hidden className="money-float" onAnimationEnd={() => setGain(null)}>
+          +{formatMoney(gain.value)}
+        </span>
+      )}
+    </p>
   );
 }
 
