@@ -42,7 +42,7 @@ function productionHeaders(): Plugin {
       const env = loadEnv(config.mode, config.envDir || process.cwd(), "VITE_");
       if (!env.VITE_SUPABASE_URL || !env.VITE_SUPABASE_ANON_KEY) {
         throw new Error(
-          "VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set (in .env.local or .env.production) to build",
+          "VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set to build: in .env.production (committed), .env.local, or the host's build variables",
         );
       }
       supabase = new URL(env.VITE_SUPABASE_URL).origin;

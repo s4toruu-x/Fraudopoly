@@ -71,9 +71,11 @@ tables and functions have their own names.
    receive mail, so with it on every sign-up is refused.
 5. Restart `yarn dev`.
 
-Builds (`yarn build`) read the same settings from `.env.local`, or from
-`.env.production` if you want different ones for the live site. The build
-stops if they're missing.
+Builds (`yarn build`, and Cloudflare's) read the settings from
+`.env.production`, which is committed so Cloudflare has them. That's safe
+because the publishable key is public by design: it ships in the site's code.
+Never put a secret or `service_role` key in it. The build stops if the
+settings are missing.
 
 ## Deploy to Cloudflare
 
