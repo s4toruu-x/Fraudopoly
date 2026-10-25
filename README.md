@@ -12,9 +12,16 @@ what the server sends.
 
 ## Run it
 
+The project uses Yarn 4 (pinned in `package.json`). Turn on Node's Corepack once, so
+`yarn` runs that version:
+
 ```bash
-npm install
-npm run dev
+corepack enable
+```
+
+```bash
+yarn install
+yarn dev
 ```
 
 Then open http://localhost:5174. It needs the
@@ -62,9 +69,9 @@ tables and functions have their own names.
 4. **Accounts.** On the same page, under **Email**, keep Email on and turn
    **Confirm email** off. Usernames become hidden addresses that can't
    receive mail, so with it on every sign-up is refused.
-5. Restart `npm run dev`.
+5. Restart `yarn dev`.
 
-Builds (`npm run build`) read the same settings from `.env.local`, or from
+Builds (`yarn build`) read the same settings from `.env.local`, or from
 `.env.production` if you want different ones for the live site. The build
 stops if they're missing.
 
@@ -77,17 +84,17 @@ npx wrangler login
 ```
 
 ```bash
-npm run deploy
+yarn deploy
 ```
 
-`npm run deploy` builds into `dist/` and uploads it as the `fraudopoly`
+`yarn deploy` builds into `dist/` and uploads it as the `fraudopoly`
 Worker. The first deploy prints its address
 (`https://fraudopoly.<your-subdomain>.workers.dev`). To use your own domain,
 add it under the Worker's **Settings > Domains & Routes** in the Cloudflare
 dashboard. Nothing in Supabase needs to change: accounts use passwords, with
 no emails or redirect links.
 
-`npm run preview` builds and serves the site locally the way Cloudflare will,
+`yarn preview` builds and serves the site locally the way Cloudflare will,
 at http://localhost:8787.
 
 The build also writes `dist/_headers`, which Cloudflare sends with every page:
@@ -129,7 +136,7 @@ const SOME_SERIES: NameGroup = {
 export const NAME_GROUPS: NameGroup[] = [DISCORD, SOME_SERIES, RANDOM];
 ```
 
-After changing it, run `npm run seed`, then run the new `supabase/seed.sql` in
+After changing it, run `yarn seed`, then run the new `supabase/seed.sql` in
 the SQL Editor. The game picks the names up on the next page load.
 
 Each name gets a rarity from its spelling: about half Common, 30% Rare, 15%
@@ -295,7 +302,7 @@ whole theme. The few surfaces are the classes in its `@layer components`.
 - `supabase/migrations/20261102120000_claim_duplicates.sql`: `hour_pulls`,
   and new versions of `pull`, `claim` and `get_state` with duplicates as
   claims.
-- `supabase/seed.sql`: the names, made by `npm run seed` (`scripts/seed.ts`)
+- `supabase/seed.sql`: the names, made by `yarn seed` (`scripts/seed.ts`)
   from `src/game/names.ts` and `src/game/catalog.ts` (default rarities and
   prices).
 - `src/game` has the browser's side, with no React: `store.ts` (the copy of

@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy",
+    "preview": "yarn build && wrangler dev",
+    "deploy": "yarn build && wrangler deploy",
     "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
@@ -32,5 +32,6 @@
     "typescript": "~5.9",
     "vite": "^7.3.7",
     "wrangler": "^4.152.0"
-  }
+  },
+  "packageManager": "yarn@4.18.1+sha512.b2e1e7524f654f2749d32b4ebcb4622473cb5bcbc485df2007e12a154e50162a4d795526768bc5f5b8f81717bfd79deb2472813d86fb5ae2eb551fa9c872b08f"
 }
