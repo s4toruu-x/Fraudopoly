@@ -253,6 +253,38 @@
     .segmented > button:focus-visible {
         outline: 2px solid var(--accent);
     }
+    /* Page tabs: equal widths across a thin line, the chosen one underlined */
+    .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+    }
+    .tabs > button {
+        flex: 1;
+        height: 40px;
+        margin-bottom: -1px;
+        border-bottom: 2px solid transparent;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition:
+            color 0.15s,
+            border-color 0.15s;
+    }
+    .tabs > button:hover {
+        color: var(--foreground);
+    }
+    .tabs > button[aria-pressed="true"] {
+        border-bottom-color: var(--accent);
+        color: var(--foreground);
+        font-weight: 600;
+    }
+    .tabs > button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+        border-radius: 6px 6px 0 0;
+    }
+
     .segmented-sm > button {
         height: 24px;
         padding: 0 9px;
@@ -359,6 +391,38 @@
         font-size: 14px;
         font-weight: 600;
     }
+    /* "About the dev": a quiet pill with the GitHub mark, as on my other sites */
+    .about-dev {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 8px;
+        background: var(--subtle);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--muted-foreground);
+        transition: background-color 0.15s, color 0.15s;
+    }
+    .about-dev:hover {
+        background: var(--subtle-strong);
+        color: var(--foreground);
+    }
+    .about-dev svg {
+        transition: transform 0.3s;
+    }
+    .about-dev:hover svg {
+        transform: scale(1.1);
+    }
+    .about-dev-block {
+        justify-content: center;
+        width: 100%;
+        height: 42px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    .about-dev:focus-visible,
     .menu-page:focus-visible,
     .menu-account:focus-visible {
         outline: 2px solid var(--accent);
@@ -453,6 +517,16 @@
         font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
+    }
+
+    .tag-wish {
+        position: absolute;
+        top: 5%;
+        right: 6%;
+        color: #f43f5e;
+        font-size: max(12px, 12cqw);
+        line-height: 1;
+        text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
     }
 
     /* Sizes follow the card's width (cqw) */

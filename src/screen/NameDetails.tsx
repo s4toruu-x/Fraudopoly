@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RARITIES } from "@/game/content";
 import { formatChance, formatDate, formatMoney } from "@/game/format";
 import { nameChance } from "@/game/odds";
 import type { Entry, Rules } from "@/game/state";
+import { actions } from "@/game/store";
 import { NameCard } from "./NameCard";
 import { Stars } from "./Rarity";
 
@@ -14,10 +15,12 @@ interface Props {
   entry: Entry;
   rules: Rules;
   entries: Entry[];
+  /** Whose copy this is, when it isn't the player's own */
+  owner?: string;
   onClose: () => void;
 }
 
-export function NameDetails({ entry, rules, entries, onClose }: Props) {
+export function NameDetails({ entry, rules, entries, owner, onClose }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const closing = useRef(false);
   const owned = entry.count > 0;
@@ -82,16 +85,51 @@ export function NameDetails({ entry, rules, entries, onClose }: Props) {
             <dd className="tabular-nums">+{formatMoney(rules.duplicateRewards[entry.rarity])}</dd>
             <dt>Chance per pull</dt>
             <dd className="tabular-nums">{formatChance(nameChance(rules, entries, entry))}</dd>
-            <dt>Yours</dt>
+            <dt>{owner ?? "Yours"}</dt>
             <dd>{owned ? (entry.foundAt ? `Since ${formatDate(entry.foundAt)}` : "Yes") : "Not yet"}</dd>
           </dl>
         </div>
       </div>
-      <div className="flex justify-end border-t border-border px-5 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-5 py-3 sm:px-6">
+        {!owner && !owned && rules.wishlistLimit > 0 && (
+          <WishButton entry={entry} entries={entries} limit={rules.wishlistLimit} />
+        )}
         <Button variant="outline" autoFocus onClick={close}>
           Close
         </Button>
       </div>
     </dialog>
+  );
+}
+
+/** Adds the name to the player's wishlist, or takes it off */
+function WishButton({ entry, entries, limit }: { entry: Entry; entries: Entry[]; limit: number }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const count = entries.filter((other) => other.wished).length;
+  const full = !entry.wished && count >= limit;
+
+  const toggle = async () => {
+    setBusy(true);
+    setError(null);
+    const refused = await actions.wish(entry, !entry.wished);
+    setBusy(false);
+    if (refused) setError(refused.error);
+  };
+
+  return (
+    <>
+      {error && (
+        <p role="alert" className="mr-auto text-sm text-danger">
+          {error}
+        </p>
+      )}
+      <Button variant="outline" disabled={busy || full} onClick={toggle} className="mr-auto tabular-nums">
+        <span aria-hidden className={entry.wished ? "text-rose-500" : undefined}>
+          {entry.wished ? "♥" : "♡"}
+        </span>
+        {entry.wished ? "Remove from wishlist" : full ? `Wishlist full · ${count}/${limit}` : `Add to wishlist · ${count}/${limit}`}
+      </Button>
+    </>
   );
 }

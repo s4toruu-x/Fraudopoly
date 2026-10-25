@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useGame, type GameState } from "@/game/store";
-import { HREF, useRoute } from "@/lib/route";
+import { HREF, useProfileName, useRoute } from "@/lib/route";
 import { AccountPage } from "@/screen/AccountPage";
 import { Encyclopedia } from "@/screen/Encyclopedia";
 import { Footer } from "@/screen/Footer";
@@ -9,16 +9,18 @@ import { Header } from "@/screen/Header";
 import { HowItWorks } from "@/screen/HowItWorks";
 import { LatestPulls } from "@/screen/LatestPulls";
 import { Leaderboard } from "@/screen/Leaderboard";
+import { Profile } from "@/screen/Profile";
 import { PullPanel } from "@/screen/PullPanel";
 import { Trades } from "@/screen/Trades";
 
 export default function App() {
   const game = useGame();
   const route = useRoute();
+  const profileName = useProfileName();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [route]);
+  }, [route, profileName]);
 
   const ready = game.status === "ready" && game.player && game.rules;
 
@@ -36,6 +38,8 @@ export default function App() {
           <Trades entries={game.entries} />
         ) : route === "leaderboard" ? (
           <Leaderboard />
+        ) : route === "profile" && profileName ? (
+          <Profile username={profileName} entries={game.entries} rules={game.rules!} />
         ) : route === "how" ? (
           <HowItWorks rules={game.rules!} />
         ) : (

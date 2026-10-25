@@ -69,6 +69,16 @@ export function HowItWorks({ rules }: { rules: Rules }) {
         </p>
       </Part>
 
+      {rules.wishlistLimit > 0 && (
+        <Part title="Wishlist">
+          <p>
+            Open a name you don't have and add it to your wishlist, up to {rules.wishlistLimit} names.
+            Wished names get a ♥, so you can spot them in your pulls. A name leaves the list once
+            you get it. Other players can see your wishlist on your profile.
+          </p>
+        </Part>
+      )}
+
       <Part title="Latest pulls and claims">
         <p>
           The pull panel shows only what you can still claim, and what you claimed. Under it, Your
@@ -82,8 +92,9 @@ export function HowItWorks({ rules }: { rules: Rules }) {
           <a href={HREF.leaderboard} className="underline underline-offset-2">
             The leaderboard
           </a>{" "}
-          ranks players with an account by what their collection is worth: the prices of all their
-          names added up.
+          ranks players with an account two ways: by what their collection is worth (the prices of
+          all their frauds added up), and by how many {CURRENCY.name} they hold. Tap a player to see
+          their profile and encyclopedia.
         </p>
       </Part>
 

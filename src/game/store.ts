@@ -72,7 +72,7 @@ export async function refresh(): Promise<void> {
     error: null,
     player: toPlayer(data.player),
     rules: toRules(data.rules),
-    entries: (data.cards as Record<string, unknown>[]).map(toEntry),
+    entries: withWishes((data.cards as Record<string, unknown>[]).map(toEntry), data.wishlist),
     pulls: ((data.pulls as Record<string, unknown>[] | undefined) ?? []).map(toHourPull),
   });
   await refreshFeed();
@@ -100,6 +100,12 @@ export function clearGame(): void {
 
 export function failGame(message: string): void {
   set({ status: "error", error: message });
+}
+
+/** Marks the wished names; older servers send no wishlist */
+function withWishes(entries: Entry[], wishlist: unknown): Entry[] {
+  const wished = new Set((wishlist as number[] | undefined) ?? []);
+  return entries.map((entry) => ({ ...entry, wished: wished.has(entry.position) }));
 }
 
 export const actions = {
@@ -139,6 +145,15 @@ export const actions = {
     return null;
   },
 
+  /** Adds a name to the wishlist or takes it off. Returns why the server refused, if it did. */
+  wish: async (entry: Entry, wanted: boolean): Promise<{ error: string } | null> => {
+    if (!supabase) return { error: "The game has no server." };
+    const { data, error } = await supabase.rpc("set_wish", { card: entry.id, wanted });
+    if (error) return { error: explain(error.message) };
+    set({ entries: withWishes(state.entries, data) });
+    return null;
+  },
+
   claim: async (pullId: number): Promise<{ error: string } | null> => {
     if (!supabase) return { error: "The game has no server." };
     const { data, error } = await supabase.rpc("claim", { pull: pullId });
@@ -152,7 +167,7 @@ export const actions = {
     set({
       entries: added
         ? state.entries.map((entry) =>
-            entry.position === card.position ? { ...entry, count: 1, foundAt: data.found_at as number } : entry,
+            entry.position === card.position ? { ...entry, count: 1, foundAt: data.found_at as number, wished: false } : entry,
           )
         : state.entries,
       player: toPlayer(data.player),

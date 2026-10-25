@@ -72,7 +72,7 @@ function SignInForm({ guest }: { guest: boolean }) {
 
   return (
     <form onSubmit={submit} className="panel flex flex-col gap-4 p-5">
-      <div role="group" aria-label="Create an account or sign in" className="segmented self-start">
+      <div role="group" aria-label="Create an account or sign in" className="tabs">
         <button type="button" aria-pressed={creating} onClick={() => setCreating(true)}>
           Create account
         </button>

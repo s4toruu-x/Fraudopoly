@@ -1,5 +1,6 @@
 import { useAccount } from "@/game/account";
 import { HREF } from "@/lib/route";
+import { AboutDev } from "./AboutDev";
 
 export function Footer() {
   const account = useAccount();
@@ -13,9 +14,13 @@ export function Footer() {
             ? "Playing as a guest."
             : ""}
       </span>
-      <a href={HREF.how} className="hover:text-foreground">
-        How it works
-      </a>
+      <div className="flex items-center gap-3">
+        <a href={HREF.how} className="hover:text-foreground">
+          How it works
+        </a>
+        {/* On a phone it's in the menu */}
+        <AboutDev className="hidden sm:inline-flex" />
+      </div>
     </footer>
   );
 }

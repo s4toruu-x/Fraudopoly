@@ -165,7 +165,7 @@ function PullItem({
   const seconds = Math.max(0, Math.ceil((pull.claimUntil - now) / 1000));
   // Only a just-pulled card flips; ones loaded with the page are face up
   const [fresh] = useState(() => Date.now() < pull.claimUntil - (rules.claimSeconds - 2) * 1000);
-  const card = <NameCard name={entry.name} rarity={entry.rarity} owned={owned || open} isNew={!owned} />;
+  const card = <NameCard name={entry.name} rarity={entry.rarity} owned={owned || open} isNew={!owned} wished={entry.wished} />;
 
   return (
     <li className={cn("flex min-w-0 flex-col gap-1.5", !open && !pull.claimed && "opacity-55")}>

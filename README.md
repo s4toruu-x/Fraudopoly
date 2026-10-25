@@ -12,12 +12,7 @@ what the server sends.
 
 ## Run it
 
-The project uses Yarn 4 (pinned in `package.json`). Turn on Node's Corepack once, so
-`yarn` runs that version:
-
-```bash
-corepack enable
-```
+The project uses Yarn 1.22.22 (pinned in `package.json`):
 
 ```bash
 yarn install
@@ -63,6 +58,12 @@ tables and functions have their own names.
      pull panel to show.
    - `20261103120000_feed_split.sql`: "Latest pulls" in two, your own pulls
      and everyone's claims.
+   - `20261104120000_leaderboards_and_profiles.sql`: a Fraudbucks leaderboard
+     next to the collection one, and player profiles. Until it's run, only
+     the collection leaderboard shows and profiles say their function is
+     missing.
+   - `20261105120000_wishlist.sql`: wishlists. Until it's run, the wishlist
+     button and filter don't show.
 3. **Guests.** Under **Authentication > Sign In / Providers**, turn on **Allow
    anonymous sign-ins**. Every visitor without an account plays as an
    anonymous user.
@@ -220,12 +221,25 @@ taken out of the list leaves the game and every collection.
   hidden address like `diogo@players.fraudopoly.invalid`, which the server
   reads the username back from. There's no email, so a forgotten password can
   only be reset by you, under **Authentication > Users**.
-- **Leaderboard.** The 20 players with an account whose collections are worth
-  the most, the sum of their names' prices, with how many names they have
-  (`get_leaderboard`). Your own place shows under them when you aren't in the
-  20. Guests aren't on it. The page checks again every 30 seconds.
+- **Leaderboards.** Two, switched at the top of the page (`get_leaderboard`):
+  **Collection**, the 20 players whose frauds are worth the most (the sum of
+  their prices), with how many frauds they have, and **Fraudbucks**, the 20
+  with the biggest balance. Your own place shows under the 20 when you aren't
+  in it, and the collection board starts with your rank and how many frauds
+  you have. Only players with an account are ranked, and nobody at zero.
+  The page checks again every 30 seconds.
+- **Wishlist.** Up to 5 names you don't have (`wishlist_limit()` in the
+  wishlist migration), added and removed from a name's details (`set_wish`).
+  Wished names get a ♥ on their card, in the encyclopedia and in the hour's
+  pulls, and the encyclopedia has a Wishlist filter. A name leaves the list
+  once you get it, by claim or trade, and a guest's list moves into a new
+  account. Profiles show other players' wishlists.
+- **Profiles.** A player's name on the leaderboard opens their profile
+  (`#/player/<username>`, `get_profile`): their ranks, frauds, worth and
+  Fraudbucks, and their encyclopedia, with what they own in color.
 - **Pages.** Pull (`#/`), Encyclopedia (`#/encyclopedia`), Trades (`#/trades`),
-  Leaderboard (`#/leaderboard`), Account (`#/account`) and How it works (`#/how-it-works`, linked from the
+  Leaderboard (`#/leaderboard`), profiles (`#/player/<username>`), Account
+  (`#/account`) and How it works (`#/how-it-works`, linked from the
   pull panel and the footer), which explains the rules to players with the
   server's own numbers. The page is in the address's `#`, so it works on any
   static host and the back button moves between pages.
@@ -315,7 +329,7 @@ whole theme. The few surfaces are the classes in its `@layer components`.
   shown in Rates and the details) and `format.ts`.
 - `src/screen` has the UI: `Header`, `PullPanel` (the button, the card just
   pulled, claiming and the rates), `LatestPulls` (everyone's pulls),
-  `Encyclopedia`, `Trades`, `Leaderboard`, `AccountPage`, `HowItWorks`, `NameCard`, `NameDetails` (the
+  `Encyclopedia`, `Trades`, `Leaderboard`, `Profile`, `AboutDev`, `AccountPage`, `HowItWorks`, `NameCard`, `NameDetails` (the
   pop-up a card opens), `Rarity` (stars and the
   "New" label) and `Footer`.
 - `src/lib` has `route.ts` (which page is showing), `supabase.ts`, `theme.ts`

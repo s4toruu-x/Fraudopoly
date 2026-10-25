@@ -4,6 +4,8 @@ export interface Rules {
   pullsPerHour: number;
   claimsPerHour: number;
   claimSeconds: number;
+  /** 0 on servers without wishlists */
+  wishlistLimit: number;
   /** By rarity, Common first */
   chances: number[];
   /** By rarity, Common first */
@@ -41,6 +43,7 @@ export interface Entry {
   price: number | null;
   /** 1 if owned, else 0 */
   count: number;
+  wished: boolean;
   foundAt: number | null;
 }
 
@@ -88,6 +91,7 @@ export function toRules(r: Record<string, unknown>): Rules {
     // Older servers have no claims
     claimsPerHour: (r.claims_per_hour as number | undefined) ?? 0,
     claimSeconds: (r.claim_seconds as number | undefined) ?? 0,
+    wishlistLimit: (r.wishlist_limit as number | undefined) ?? 0,
     chances: r.chances as number[],
     // Older servers have no duplicate rewards
     duplicateRewards: (r.duplicate_rewards as number[] | undefined) ?? [0, 0, 0, 0],
@@ -122,6 +126,7 @@ export function toEntry(c: Record<string, unknown>): Entry {
     category: toCategory(c),
     price: (c.price as number | undefined) ?? null,
     count: c.count as number,
+    wished: false,
     foundAt: (c.found_at as number | null) ?? null,
   };
 }

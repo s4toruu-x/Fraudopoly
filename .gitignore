@@ -6,8 +6,3 @@ dist
 supabase/
 .vite/
 .wrangler/
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-.pnp.*

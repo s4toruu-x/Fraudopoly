@@ -3,11 +3,12 @@ import { useAccount } from "@/game/account";
 import { CURRENCY } from "@/game/content";
 import { formatMoney } from "@/game/format";
 import { useGame } from "@/game/store";
-import { HREF, type Route } from "@/lib/route";
+import { HREF, type Page, type Route } from "@/lib/route";
 import { setTheme, useTheme, type Theme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
+import { AboutDev } from "./AboutDev";
 
-const PAGES: { route: Route; label: string }[] = [
+const PAGES: { route: Page; label: string }[] = [
   { route: "pull", label: "Pull" },
   { route: "encyclopedia", label: "Encyclopedia" },
   { route: "trades", label: "Trades" },
@@ -26,7 +27,7 @@ export function Header({ route }: { route: Route }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const header = useRef<HTMLElement>(null);
   const accountLabel = account.status === "signed-in" ? account.username : "Sign in";
-  const pageLabel = PAGES.find((page) => page.route === route)?.label ?? (route === "account" ? "Account" : "Menu");
+  const pageLabel = PAGES.find((page) => page.route === route)?.label ?? (route === "account" ? "Account" : route === "profile" ? "Profile" : "Menu");
 
   useEffect(() => {
     setMenuOpen(false);
@@ -122,6 +123,7 @@ export function Header({ route }: { route: Route }) {
             </a>
           </>
         )}
+        <AboutDev block />
         <ThemeSwitch className="w-full [&>button]:flex-1" />
       </div>
     </header>

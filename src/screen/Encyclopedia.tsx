@@ -4,17 +4,29 @@ import type { Entry, Rules } from "@/game/state";
 import { NameCard } from "./NameCard";
 import { NameDetails } from "./NameDetails";
 
-type Show = "all" | "owned" | "missing";
+type Show = "all" | "owned" | "missing" | "wishlist";
 
 const SHOWS: { id: Show; label: string }[] = [
   { id: "all", label: "All" },
   { id: "owned", label: "Owned" },
   { id: "missing", label: "Missing" },
+  { id: "wishlist", label: "Wishlist" },
 ];
 
 const ALL_CATEGORIES = "";
 
-export function Encyclopedia({ entries, rules }: { entries: Entry[]; rules: Rules }) {
+export function Encyclopedia({
+  entries,
+  rules,
+  title = "Encyclopedia",
+  owner,
+}: {
+  entries: Entry[];
+  rules: Rules;
+  title?: string;
+  /** Whose collection this is, when it isn't the player's own */
+  owner?: string;
+}) {
   const [show, setShow] = useState<Show>("all");
   const [category, setCategory] = useState(ALL_CATEGORIES);
   const [query, setQuery] = useState("");
@@ -29,7 +41,7 @@ export function Encyclopedia({ entries, rules }: { entries: Entry[]; rules: Rule
     .sort((a, b) => (b.price ?? 0) - (a.price ?? 0) || b.rarity - a.rarity || a.position - b.position)
     .filter(
       (entry) =>
-        (show === "all" || (show === "owned") === entry.count > 0) &&
+        (show === "all" || (show === "wishlist" ? entry.wished : (show === "owned") === entry.count > 0)) &&
         (category === ALL_CATEGORIES || formatCategory(entry.category) === category) &&
         (search === "" ||
           entry.name.toLowerCase().includes(search) ||
@@ -41,21 +53,22 @@ export function Encyclopedia({ entries, rules }: { entries: Entry[]; rules: Rule
     <section aria-labelledby="encyclopedia-title" className="flex flex-col gap-4">
       <div className="flex items-baseline justify-between gap-2">
         <h2 id="encyclopedia-title" className="text-xl font-semibold">
-          Encyclopedia
+          {title}
         </h2>
         <p className="text-sm text-muted-foreground">
           {found} of {entries.length} collected
         </p>
       </div>
 
+      <div role="group" aria-label="Show" className="tabs">
+        {SHOWS.filter(({ id }) => id !== "wishlist" || rules.wishlistLimit > 0).map(({ id, label }) => (
+          <button key={id} type="button" aria-pressed={show === id} onClick={() => setShow(id)}>
+            {label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-wrap items-center gap-3">
-        <div role="group" aria-label="Show" className="segmented">
-          {SHOWS.map(({ id, label }) => (
-            <button key={id} type="button" aria-pressed={show === id} onClick={() => setShow(id)}>
-              {label}
-            </button>
-          ))}
-        </div>
         {categories.length > 1 && (
           <select
             value={category}
@@ -83,7 +96,15 @@ export function Encyclopedia({ entries, rules }: { entries: Entry[]; rules: Rule
 
       {visible.length === 0 ? (
         <p className="py-12 text-center text-muted-foreground">
-          {search ? "No matches." : show === "missing" ? "You have every name." : "No names yet."}
+          {search
+            ? "No matches."
+            : show === "wishlist"
+              ? owner
+                ? `${owner} hasn't wished for anything.`
+                : "Nothing wished for yet. Open a name to add it."
+              : show === "missing"
+                ? "Every name is collected."
+                : "No names yet."}
         </p>
       ) : (
         <ul className="grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-5 md:grid-cols-6">
@@ -94,7 +115,7 @@ export function Encyclopedia({ entries, rules }: { entries: Entry[]; rules: Rule
                 onClick={() => setOpened(entry.position)}
                 className="card-button flex w-full min-w-0 flex-col gap-1.5 text-left"
               >
-                <NameCard name={entry.name} rarity={entry.rarity} owned={entry.count > 0} />
+                <NameCard name={entry.name} rarity={entry.rarity} owned={entry.count > 0} wished={entry.wished} />
                 <span className="flex min-w-0 flex-col">
                   <span className={entry.count > 0 ? "truncate text-sm" : "truncate text-sm text-muted-foreground"}>
                     {entry.name}
@@ -119,6 +140,7 @@ export function Encyclopedia({ entries, rules }: { entries: Entry[]; rules: Rule
           entry={details}
           rules={rules}
           entries={entries}
+          owner={owner}
           onClose={() => setOpened(null)}
         />
       )}

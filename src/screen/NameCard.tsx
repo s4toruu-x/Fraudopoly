@@ -6,12 +6,14 @@ export function NameCard({
   rarity,
   owned = true,
   isNew = false,
+  wished = false,
   className,
 }: {
   name: string | null;
   rarity: number;
   owned?: boolean;
   isNew?: boolean;
+  wished?: boolean;
   className?: string;
 }) {
   return (
@@ -20,6 +22,11 @@ export function NameCard({
         {name ? Array.from(name)[0]?.toUpperCase() : "?"}
       </span>
       {isNew && <NewTag />}
+      {wished && (
+        <span role="img" aria-label="On the wishlist" className="tag-wish">
+          ♥
+        </span>
+      )}
       <Stars rarity={rarity} />
     </div>
   );
