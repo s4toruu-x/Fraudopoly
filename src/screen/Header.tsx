@@ -12,6 +12,7 @@ const PAGES: { route: Page; label: string }[] = [
   { route: "pull", label: "Pull" },
   { route: "encyclopedia", label: "Encyclopedia" },
   { route: "trades", label: "Trades" },
+  { route: "auctions", label: "Auctions" },
   { route: "leaderboard", label: "Leaderboard" },
 ];
 

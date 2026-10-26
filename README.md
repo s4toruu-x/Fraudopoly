@@ -69,6 +69,10 @@ tables and functions have their own names.
      balance. Until it's run, it ranks by the balance.
    - `20261107120000_sell.sql`: selling a fraud for its price. Until it's run,
      the Sell button says its function is missing.
+   - `20261108120000_auctions.sql`: auctions. Until it's run, the Auctions
+     page says its function is missing.
+   - `20261109120000_auction_start_3x.sql`: auctions start at 3x the price
+     instead of 5x.
 3. **Guests.** Under **Authentication > Sign In / Providers**, turn on **Allow
    anonymous sign-ins**. Every visitor without an account plays as an
    anonymous user.
@@ -241,11 +245,22 @@ taken out of the list leaves the game and every collection.
   pulls, and the encyclopedia has a Wishlist filter. A name leaves the list
   once you get it, by claim or trade, and a guest's list moves into a new
   account. Profiles show other players' wishlists.
+- **Auctions** (`#/auctions`). A player with an account puts a fraud they
+  own up from its details for 1, 6 or 24 hours, starting at 3x its price
+  (`create_auction`); the auction holds it meanwhile. Others with an account
+  bid (`bid`), each at least 5% over the last; a bid is held at once and handed
+  back when outbid, and a bid in the last 2 minutes pushes the end out to 2
+  minutes. At the end the top bidder gets the fraud and the seller the bid;
+  with no bids it goes back to the seller, and a winner who already has it by
+  then is refunded. The seller can cancel until someone bids, and has at most
+  5 live at once. Nothing runs on a timer: `settle_auctions` settles ended
+  ones whenever anyone loads the game or the page. The numbers are in
+  `auction_rules()`.
 - **Profiles.** A player's name on the leaderboard opens their profile
   (`#/player/<username>`, `get_profile`): their ranks, frauds, worth and
   Fraudbucks, and their encyclopedia, with what they own in color.
 - **Pages.** Pull (`#/`), Encyclopedia (`#/encyclopedia`), Trades (`#/trades`),
-  Leaderboard (`#/leaderboard`), profiles (`#/player/<username>`), Account
+  Auctions (`#/auctions`), Leaderboard (`#/leaderboard`), profiles (`#/player/<username>`), Account
   (`#/account`) and How it works (`#/how-it-works`, linked from the
   pull panel and the footer), which explains the rules to players with the
   server's own numbers. The page is in the address's `#`, so it works on any

@@ -2,13 +2,14 @@ import { useSyncExternalStore } from "react";
 
 // Pages live in the URL hash, so any static host works and the back button moves between them.
 
-export type Page = "pull" | "encyclopedia" | "trades" | "leaderboard" | "account" | "how";
+export type Page = "pull" | "encyclopedia" | "trades" | "auctions" | "leaderboard" | "account" | "how";
 export type Route = Page | "profile";
 
 export const HREF: Record<Page, string> = {
   pull: "#/",
   encyclopedia: "#/encyclopedia",
   trades: "#/trades",
+  auctions: "#/auctions",
   leaderboard: "#/leaderboard",
   account: "#/account",
   how: "#/how-it-works",

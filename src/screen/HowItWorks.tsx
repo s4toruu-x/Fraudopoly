@@ -100,6 +100,18 @@ export function HowItWorks({ rules }: { rules: Rules }) {
         </p>
       </Part>
 
+      <Part title="Auctions">
+        <p>
+          With an account, you can put a fraud you own up for{" "}
+          <a href={HREF.auctions} className="underline underline-offset-2">
+            auction
+          </a>{" "}
+          from its details, for 1, 6 or 24 hours. It starts at 3 times its price, and each bid has to beat
+          the last by 5%. Your bid is held while you lead and handed back if someone outbids you; a bid in
+          the last 2 minutes adds time. The top bid wins the fraud, and with no bids it comes back to you.
+        </p>
+      </Part>
+
       <Part title="Trading">
         <p>
           Trading needs an account. On{" "}

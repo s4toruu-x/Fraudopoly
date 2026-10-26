@@ -610,12 +610,40 @@
     }
 }
 
+/* An auction you're winning */
+@layer components {
+    .auction-leading {
+        border-color: var(--stars);
+    }
+    /* The details' close, in the corner */
+    .details-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition:
+            background-color 0.15s,
+            color 0.15s;
+    }
+    .details-close:hover {
+        background: var(--subtle);
+        color: var(--foreground);
+    }
+    .details-close:focus-visible {
+        outline: 2px solid var(--accent);
+    }
+
+}
+
 /* Selling and money: the confirm countdown, the "Sold" stamp, and the balance taking in a gain */
 @layer components {
-    .sell-confirm {
-        position: relative;
-        overflow: hidden;
-    }
     /* Runs down the seconds left to confirm (SELL_CONFIRM_MS in NameDetails) */
     .sell-countdown {
         position: absolute;
@@ -659,15 +687,6 @@
         }
     }
 
-    .sold-note {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--stars);
-        animation: fade-up 0.3s ease-out both;
-    }
     @keyframes fade-up {
         from {
             opacity: 0;
@@ -715,13 +734,135 @@
     }
 }
 
+/* The details' actions: rows with a tinted icon, a title and note, and an amount */
+@layer components {
+    .action-list {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .action-item {
+        position: relative;
+        overflow: hidden;
+        transition: background-color 0.2s;
+    }
+    .action-item + .action-item {
+        border-top: 1px solid var(--border);
+    }
+    .action-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        text-align: left;
+        transition: background-color 0.15s;
+    }
+    button.action-row {
+        cursor: pointer;
+    }
+    button.action-row:hover:not(:disabled) {
+        background: var(--subtle);
+    }
+    button.action-row:disabled {
+        cursor: default;
+    }
+    .wished button.action-row:disabled,
+    button.action-row:disabled .action-icon {
+        opacity: 0.7;
+    }
+    button.action-row:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+    }
+    .action-icon {
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        transition: transform 0.2s;
+    }
+    button.action-row:hover:not(:disabled) .action-icon {
+        transform: scale(1.08);
+    }
+    .tone-gold {
+        color: var(--stars);
+        background: color-mix(in srgb, var(--stars) 16%, transparent);
+    }
+    .tone-blue {
+        color: #3b82f6;
+        background: color-mix(in srgb, #3b82f6 16%, transparent);
+    }
+    .tone-rose {
+        color: #f43f5e;
+        background: color-mix(in srgb, #f43f5e 15%, transparent);
+    }
+    .tone-green {
+        color: #22c55e;
+        background: color-mix(in srgb, #22c55e 15%, transparent);
+    }
+    .action-aside {
+        font-size: 14px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+    .action-chevron {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        color: var(--muted-foreground);
+        transition: transform 0.2s;
+    }
+    button.action-row:hover .action-chevron {
+        transform: translateX(2px);
+    }
+    .action-chevron.open,
+    button.action-row:hover .action-chevron.open {
+        transform: rotate(90deg);
+    }
+    /* Selling: the row turns gold while it waits for the second tap */
+    .action-item.confirming {
+        background: color-mix(in srgb, var(--stars) 14%, transparent);
+    }
+    .action-item .sell-countdown {
+        background: var(--stars);
+        opacity: 0.85;
+    }
+    .has-error .action-note {
+        overflow: visible;
+        white-space: normal;
+        color: var(--danger);
+    }
+    /* The auction drawer slides open under its row */
+    .action-drawer {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.25s ease;
+    }
+    .action-drawer > * {
+        min-height: 0;
+        overflow: hidden;
+    }
+    .action-drawer.open {
+        grid-template-rows: 1fr;
+    }
+    .action-item.outcome {
+        animation: fade-up 0.3s ease-out both;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .flip-inner,
     .details,
     .details::backdrop,
     .sell-countdown,
     .sold-stamp > span,
-    .sold-note,
+    .action-item.outcome,
     .balance-amount.bump {
         animation: none;
     }
@@ -730,7 +871,8 @@
         display: none;
     }
     .menu,
-    .menu[data-open] {
+    .menu[data-open],
+    .action-drawer {
         transition: none;
     }
 }

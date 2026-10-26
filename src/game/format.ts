@@ -28,6 +28,15 @@ export function formatAgo(at: number, now: number): string {
   return formatDate(at);
 }
 
+/** Time left: "2h 05m" past an hour, else "4:09" */
+export function formatTimeLeft(ms: number): string {
+  if (ms >= 3600e3) {
+    const minutes = Math.floor(ms / 60e3);
+    return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, "0")}m`;
+  }
+  return formatCountdown(ms);
+}
+
 /** 0.075 → "7.5%" */
 export function formatChance(p: number): string {
   return `${+(p * 100).toFixed(2)}%`;

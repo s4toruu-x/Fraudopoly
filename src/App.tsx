@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useGame, type GameState } from "@/game/store";
 import { HREF, useProfileName, useRoute } from "@/lib/route";
 import { AccountPage } from "@/screen/AccountPage";
+import { Auctions } from "@/screen/Auctions";
 import { Encyclopedia } from "@/screen/Encyclopedia";
 import { Footer } from "@/screen/Footer";
 import { Header } from "@/screen/Header";
@@ -36,6 +37,8 @@ export default function App() {
           <Encyclopedia entries={game.entries} rules={game.rules!} />
         ) : route === "trades" ? (
           <Trades entries={game.entries} />
+        ) : route === "auctions" ? (
+          <Auctions entries={game.entries} />
         ) : route === "leaderboard" ? (
           <Leaderboard />
         ) : route === "profile" && profileName ? (
