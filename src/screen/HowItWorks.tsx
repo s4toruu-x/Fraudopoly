@@ -95,8 +95,16 @@ export function HowItWorks({ rules }: { rules: Rules }) {
             The leaderboard
           </a>{" "}
           ranks players with an account two ways: by what their collection is worth (the prices of
-          all their frauds added up), and by how many {CURRENCY.name} they hold. Tap a player to see
-          their profile and encyclopedia.
+          all their frauds added up), and by net worth ({CURRENCY.name} plus collection). Tap a
+          player to see their profile and encyclopedia.
+        </p>
+      </Part>
+
+      <Part title="Profile card">
+        <p>
+          Open your card from the Account page: your favorite fraud, how many you have, what they're
+          worth and your ranks. With an account, pick a favorite from a fraud's details. Share the
+          link or save the card as a picture to post.
         </p>
       </Part>
 
@@ -131,8 +139,9 @@ export function HowItWorks({ rules }: { rules: Rules }) {
           <a href={HREF.account} className="underline underline-offset-2">
             account
           </a>{" "}
-          to keep them, play on other devices and trade; your guest names move into it. Signing in to an
-          account you already have leaves the guest's names behind.
+          to keep them, play on other devices and trade, with a username and password or with Discord;
+          your guest names move into it. You can connect Discord to an account later too. Signing in to
+          an account you already have leaves the guest's names behind.
         </p>
       </Part>
     </section>

@@ -19,7 +19,7 @@ yarn install
 yarn dev
 ```
 
-Then open http://localhost:5174. It needs the
+Then open http://localhost:5173. It needs the
 server set up first (below); without it the page says what's missing.
 
 ## Server setup
@@ -73,13 +73,33 @@ tables and functions have their own names.
      page says its function is missing.
    - `20261109120000_auction_start_3x.sql`: auctions start at 3x the price
      instead of 5x.
+   - `20261110120000_discord_accounts.sql`: usernames for accounts made with
+     Discord, and a check that a password sign-up's name is free.
+   - `20261111120000_favorite_fraud.sql`: a favorite fraud for the profile
+     card. Until it's run, setting a favorite fails and profile cards show
+     none.
 3. **Guests.** Under **Authentication > Sign In / Providers**, turn on **Allow
    anonymous sign-ins**. Every visitor without an account plays as an
    anonymous user.
 4. **Accounts.** On the same page, under **Email**, keep Email on and turn
    **Confirm email** off. Usernames become hidden addresses that can't
    receive mail, so with it on every sign-up is refused.
-5. Restart `yarn dev`.
+5. **Discord** (optional, for "Continue with Discord"):
+   1. In the [Discord Developer Portal](https://discord.com/developers/applications),
+      make an application. Under **OAuth2**, copy the **Client ID**, reset and
+      copy the **Client Secret**, and add this redirect:
+      `https://<your-project>.supabase.co/auth/v1/callback`.
+   2. In Supabase, under **Authentication > Sign In / Providers**, turn on
+      **Discord** and paste the Client ID and Secret.
+   3. On the same page, turn on **Allow manual linking**, so guests and
+      password accounts can connect Discord to the account they have.
+   4. Under **Authentication > URL Configuration**, set the **Site URL** to the
+      live site, and add both addresses with `/**` on the end to **Redirect
+      URLs**: `https://<live site>/**` and `http://localhost:5173/**`. The
+      `/**` matters: supabase-js adds `?sb_flow_id=…` to the return address,
+      and without it Supabase sends players to the Site URL instead, where the
+      sign-in can't finish (the page says so when that happens).
+6. Restart `yarn dev`.
 
 Builds (`yarn build`, and Cloudflare's) read the settings from
 `.env.production`, which is committed so Cloudflare has them. That's safe
@@ -232,6 +252,15 @@ taken out of the list leaves the game and every collection.
   hidden address like `diogo@players.fraudopoly.invalid`, which the server
   reads the username back from. There's no email, so a forgotten password can
   only be reset by you, under **Authentication > Users**.
+- **Discord.** On the Account page, a guest can **Continue with Discord**: the
+  guest itself becomes the account (Supabase's `linkIdentity`), so everything
+  stays. A password account can **Connect Discord** to sign in with it too, and
+  "Sign in with Discord" signs in to an account made that way. A Discord
+  account gets its username from its Discord name the first time
+  (`current_player`): made safe, with a number added if it's taken, and never
+  changed after. If the Discord account already belongs to another player, the
+  page says so and offers to sign in to that one instead. Sign-ins use PKCE, so
+  Discord sends the player back with `?code=`, leaving the page's `#` alone.
 - **Leaderboards.** Two, switched at the top of the page (`get_leaderboard`):
   **Collection**, the 20 players whose frauds are worth the most (the sum of
   their prices), with how many frauds they have, and **Fraudbucks**, the 20
@@ -257,8 +286,16 @@ taken out of the list leaves the game and every collection.
   ones whenever anyone loads the game or the page. The numbers are in
   `auction_rules()`.
 - **Profiles.** A player's name on the leaderboard opens their profile
-  (`#/player/<username>`, `get_profile`): their ranks, frauds, worth and
-  Fraudbucks, and their encyclopedia, with what they own in color.
+  (`#/player/<username>`, `get_profile`): a header lit in their favorite's
+  rarity with counts per rarity, their frauds, worth and net worth with ranks,
+  a showcase of their 6 priciest frauds, and their collection, with what they
+  own in color. On your own profile the header has Share card.
+- **Profile card.** A pop-up from the Account page, only for the signed-in
+  player (`ProfileCardDialog`): your favorite fraud
+  (`set_favorite`, picked from a fraud's details, cleared if they stop owning
+  it), their frauds, worth, net worth, Fraudbucks and count per rarity.
+  Share link uses the share sheet or copies the profile URL; Save image draws
+  a 1200x630 PNG on a canvas (`src/lib/profileImage.ts`).
 - **Pages.** Pull (`#/`), Encyclopedia (`#/encyclopedia`), Trades (`#/trades`),
   Auctions (`#/auctions`), Leaderboard (`#/leaderboard`), profiles (`#/player/<username>`), Account
   (`#/account`) and How it works (`#/how-it-works`, linked from the

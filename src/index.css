@@ -610,6 +610,290 @@
     }
 }
 
+/* Discord, in its own colors, as its brand asks for sign-in buttons */
+@layer components {
+    .discord-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 44px;
+        padding: 0 18px;
+        border-radius: 10px;
+        background: #5865f2;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s;
+    }
+    .discord-button:hover:not(:disabled) {
+        background: #4752c4;
+    }
+    .discord-button:disabled {
+        opacity: 0.7;
+        cursor: progress;
+    }
+    .discord-button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+    .connected-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 24px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: color-mix(in srgb, #22c55e 14%, transparent);
+        color: #22c55e;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .connected-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+    /* "or with a username", between two lines */
+    .or-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--muted-foreground);
+    }
+    .or-divider::before,
+    .or-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+}
+
+/* The profile card: lit in the favorite's rarity color */
+@layer components {
+    .profile-card {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--panel);
+    }
+    .profile-card.has-favorite {
+        background:
+            radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--r-bg) 26%, transparent), transparent 60%),
+            var(--panel);
+        border-color: color-mix(in srgb, var(--r-bg) 35%, var(--border));
+    }
+    @media (min-width: 40rem) {
+        .profile-card {
+            padding: 24px;
+        }
+    }
+    .profile-stat {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: 1px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: var(--subtle);
+    }
+    .rarity-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--r-bg) 20%, transparent);
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .rarity-chip .stars {
+        font-size: 11px;
+        letter-spacing: -0.04em;
+    }
+    .share-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            background-color 0.15s,
+            transform 0.15s;
+    }
+    .share-button:hover:not(:disabled) {
+        background: var(--subtle);
+    }
+    .share-button:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+    .share-button.primary {
+        border-color: transparent;
+        background: var(--accent);
+        color: var(--accent-foreground);
+    }
+    .share-button.primary:hover:not(:disabled) {
+        background: var(--accent);
+        opacity: 0.88;
+    }
+    .share-button:disabled {
+        opacity: 0.6;
+        cursor: progress;
+    }
+    .share-button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+    /* The profile page's header, lit like the card */
+    .profile-hero {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--panel);
+        animation: fade-up 0.3s ease-out both;
+    }
+    .profile-hero.has-favorite {
+        background:
+            radial-gradient(90% 140% at 0% 50%, color-mix(in srgb, var(--r-bg) 24%, transparent), transparent 65%),
+            var(--panel);
+        border-color: color-mix(in srgb, var(--r-bg) 35%, var(--border));
+    }
+    @media (min-width: 40rem) {
+        .profile-hero {
+            padding: 22px;
+        }
+    }
+    .progress {
+        height: 4px;
+        margin-top: 4px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--foreground) 10%, transparent);
+    }
+    .progress span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--foreground);
+        transition: width 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        color: var(--muted-foreground);
+        transition: color 0.15s;
+    }
+    .back-link:hover {
+        color: var(--foreground);
+    }
+    .details.profile-dialog {
+        width: min(100% - 32px, 640px);
+    }
+    .profile-dialog .profile-card {
+        border: 0;
+        border-radius: 0;
+    }
+    /* The card plays in: the favorite pops up and shines, then the rest follows in order */
+    .profile-dialog .pc-favorite .name-card {
+        overflow: hidden;
+        animation: pc-pop 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) 0.08s both;
+    }
+    .profile-dialog .pc-favorite .name-card:not(.missing)::after {
+        content: "";
+        position: absolute;
+        inset: -20% auto -20% -60%;
+        width: 45%;
+        background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.45), transparent);
+        transform: skewX(-18deg);
+        animation: pc-shine 0.9s ease-out 0.5s both;
+        pointer-events: none;
+    }
+    .profile-dialog .pc-favorite p,
+    .profile-dialog .pc-head,
+    .profile-dialog .profile-stat,
+    .profile-dialog .pc-share {
+        animation: fade-up 0.35s ease-out both;
+    }
+    .profile-dialog .pc-head {
+        animation-delay: 0.15s;
+    }
+    .profile-dialog .pc-favorite p {
+        animation-delay: 0.3s;
+    }
+    .profile-dialog .profile-stat:nth-child(1) {
+        animation-delay: 0.22s;
+    }
+    .profile-dialog .profile-stat:nth-child(2) {
+        animation-delay: 0.28s;
+    }
+    .profile-dialog .profile-stat:nth-child(3) {
+        animation-delay: 0.34s;
+    }
+    .profile-dialog .profile-stat:nth-child(4) {
+        animation-delay: 0.4s;
+    }
+    .profile-dialog .rarity-chip {
+        animation: pc-chip 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+    }
+    .profile-dialog .rarity-chip:nth-child(1) {
+        animation-delay: 0.46s;
+    }
+    .profile-dialog .rarity-chip:nth-child(2) {
+        animation-delay: 0.51s;
+    }
+    .profile-dialog .rarity-chip:nth-child(3) {
+        animation-delay: 0.56s;
+    }
+    .profile-dialog .rarity-chip:nth-child(4) {
+        animation-delay: 0.61s;
+    }
+    .profile-dialog .pc-share {
+        animation-delay: 0.6s;
+    }
+    @keyframes pc-pop {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(0.8) rotate(-6deg);
+        }
+    }
+    @keyframes pc-shine {
+        from {
+            left: -60%;
+        }
+        to {
+            left: 130%;
+        }
+    }
+    @keyframes pc-chip {
+        from {
+            opacity: 0;
+            transform: scale(0.6);
+        }
+    }
+    .share-said {
+        animation: fade-up 0.25s ease-out both;
+    }
+}
+
 /* An auction you're winning */
 @layer components {
     .auction-leading {
@@ -801,6 +1085,14 @@
         color: #f43f5e;
         background: color-mix(in srgb, #f43f5e 15%, transparent);
     }
+    .tone-discord {
+        color: #5865f2;
+        background: color-mix(in srgb, #5865f2 16%, transparent);
+    }
+    .tone-violet {
+        color: #8b5cf6;
+        background: color-mix(in srgb, #8b5cf6 16%, transparent);
+    }
     .tone-green {
         color: #22c55e;
         background: color-mix(in srgb, #22c55e 15%, transparent);
@@ -863,7 +1155,9 @@
     .sell-countdown,
     .sold-stamp > span,
     .action-item.outcome,
-    .balance-amount.bump {
+    .balance-amount.bump,
+    .profile-dialog *,
+    .profile-dialog *::after {
         animation: none;
     }
     /* Without its fade it would never leave */

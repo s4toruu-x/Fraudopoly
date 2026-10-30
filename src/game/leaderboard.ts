@@ -37,6 +37,8 @@ export interface Profile {
   owned: Map<number, number | null>;
   /** Positions of the names they wish for */
   wishlist: Set<number>;
+  /** The position of their favorite fraud, while they still have it */
+  favorite: number | null;
 }
 
 type Result<T> = { data: T } | { error: string };
@@ -89,6 +91,7 @@ export async function fetchProfile(username: string): Promise<Result<Profile | n
         (data.owned as Record<string, unknown>[]).map((o) => [o.position as number, (o.found_at as number | null) ?? null]),
       ),
       wishlist: new Set((data.wishlist as number[] | undefined) ?? []),
+      favorite: (data.favorite as number | null | undefined) ?? null,
     },
   };
 }

@@ -27,7 +27,7 @@ export function Header({ route }: { route: Route }) {
   const game = useGame();
   const [menuOpen, setMenuOpen] = useState(false);
   const header = useRef<HTMLElement>(null);
-  const accountLabel = account.status === "signed-in" ? account.username : "Sign in";
+  const accountLabel = account.status === "signed-in" ? (account.username ?? "Account") : "Sign in";
   const pageLabel = PAGES.find((page) => page.route === route)?.label ?? (route === "account" ? "Account" : route === "profile" ? "Profile" : "Menu");
 
   useEffect(() => {

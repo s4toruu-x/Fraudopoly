@@ -6,7 +6,7 @@ import { RARITIES } from "@/game/content";
 import { formatChance, formatDate, formatMoney } from "@/game/format";
 import { nameChance } from "@/game/odds";
 import type { Entry, Rules } from "@/game/state";
-import { actions } from "@/game/store";
+import { actions, useGame } from "@/game/store";
 import { HREF } from "@/lib/route";
 import { cn } from "@/lib/utils";
 import { NameCard } from "./NameCard";
@@ -144,6 +144,10 @@ function Actions({
   if (outcome && !owned) {
     rows.push(<OutcomeRow key="outcome" outcome={outcome} />);
   }
+  // The favorite is for the profile card, which only accounts have
+  if (!outcome && owned && account.status === "signed-in") {
+    rows.push(<FavoriteRow key="favorite" entry={entry} />);
+  }
   if (!outcome && owned && entry.price !== null) {
     rows.push(<SellRow key="sell" entry={entry} price={entry.price} onSold={(amount) => onOutcome({ kind: "sold", amount })} />);
     if (account.status === "signed-in") {
@@ -175,7 +179,7 @@ function Row({
   children,
 }: {
   icon: ReactNode;
-  tone: "gold" | "blue" | "rose" | "green";
+  tone: "gold" | "blue" | "rose" | "green" | "violet";
   title: ReactNode;
   note: ReactNode;
   aside?: ReactNode;
@@ -240,6 +244,17 @@ const ICONS = {
         fill={filled ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  star: (filled: boolean) => (
+    <svg viewBox="0 0 16 16" className="size-4">
+      <path
+        d="M8 1.8l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.6l-3.8 2 .7-4.3-3.1-3 4.3-.6z"
+        fill={filled ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.4"
         strokeLinejoin="round"
       />
     </svg>
@@ -355,6 +370,34 @@ function AuctionRow({ entry, price, onListed }: { entry: Entry; price: number; o
         </div>
       </div>
     </Row>
+  );
+}
+
+/** Makes the fraud the player's favorite, shown big on their profile card, or stops it being */
+function FavoriteRow({ entry }: { entry: Entry }) {
+  const game = useGame();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isFavorite = game.favorite === entry.position;
+
+  const toggle = async () => {
+    setBusy(true);
+    setError(null);
+    const refused = await actions.favorite(isFavorite ? null : entry);
+    setBusy(false);
+    if (refused) setError(refused.error);
+  };
+
+  return (
+    <Row
+      icon={ICONS.star(isFavorite)}
+      tone="violet"
+      title={isFavorite ? "Your favorite" : "Set as favorite"}
+      note={error ?? (isFavorite ? "On your profile card · tap to unset" : "Shown big on your profile card")}
+      busy={busy}
+      className={cn(isFavorite && "wished", error && "has-error")}
+      onClick={toggle}
+    />
   );
 }
 

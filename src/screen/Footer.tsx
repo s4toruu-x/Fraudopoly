@@ -9,7 +9,9 @@ export function Footer() {
     <footer className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
       <span>
         {account.status === "signed-in"
-          ? `Signed in as ${account.username}.`
+          ? account.username
+            ? `Signed in as ${account.username}.`
+            : "Signed in."
           : account.status === "guest"
             ? "Playing as a guest."
             : ""}

@@ -4,6 +4,18 @@ const CONFIRM_EMAIL_IS_ON =
 /** Maps Supabase errors to messages; the game's own refusals pass through. */
 export function explain(message: string): string {
   if (/invalid login credentials/i.test(message)) return "Wrong username or password.";
+  if (/identity is already linked|identity_already_exists/i.test(message)) {
+    return "That Discord account already has a Fraudopoly account.";
+  }
+  if (/code verifier|flow state|pkce/i.test(message)) {
+    return "Supabase sent you back to a different address than the one you started from. In Supabase, under Authentication > URL Configuration, add this site's address (with /**) to Redirect URLs.";
+  }
+  if (/manual linking is disabled/i.test(message)) {
+    return 'Connecting Discord needs "Allow manual linking" on, under Authentication > Sign In / Providers in Supabase.';
+  }
+  if (/provider is not enabled|unsupported provider/i.test(message)) {
+    return "Discord sign-in isn't set up yet: turn on the Discord provider in Supabase (see the README).";
+  }
   if (/already registered|already exists/i.test(message)) return "That username is taken.";
   if (/email not confirmed/i.test(message)) return CONFIRM_EMAIL_IS_ON;
   // Supabase only checks the hidden address when it tries to email it, which

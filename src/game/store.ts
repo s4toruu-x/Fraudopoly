@@ -24,6 +24,8 @@ export interface GameState {
   myPulls: FeedPull[];
   claims: FeedPull[];
   pulls: HourPull[];
+  /** The position of the player's favorite fraud, shown on their profile card */
+  favorite: number | null;
 }
 
 let state: GameState = {
@@ -35,6 +37,7 @@ let state: GameState = {
   myPulls: [],
   claims: [],
   pulls: [],
+  favorite: null,
 };
 const listeners = new Set<() => void>();
 let refillTimer: ReturnType<typeof setTimeout> | undefined;
@@ -56,6 +59,13 @@ function subscribe(listener: () => void) {
   };
 }
 
+/** Follows the game from outside React; returns a way to stop */
+export function watchGame(listener: (game: GameState) => void): () => void {
+  const wrapped = () => listener(state);
+  listeners.add(wrapped);
+  return () => listeners.delete(wrapped);
+}
+
 export function useGame(): GameState {
   return useSyncExternalStore(subscribe, () => state);
 }
@@ -74,6 +84,7 @@ export async function refresh(): Promise<void> {
     rules: toRules(data.rules),
     entries: withWishes((data.cards as Record<string, unknown>[]).map(toEntry), data.wishlist),
     pulls: ((data.pulls as Record<string, unknown>[] | undefined) ?? []).map(toHourPull),
+    favorite: (data.favorite as number | null | undefined) ?? null,
   });
   await refreshFeed();
 }
@@ -95,7 +106,7 @@ export async function refreshFeed(): Promise<void> {
 }
 
 export function clearGame(): void {
-  set({ status: supabase ? "loading" : "off", error: null, player: null, entries: [], myPulls: [], claims: [], pulls: [] });
+  set({ status: supabase ? "loading" : "off", error: null, player: null, entries: [], myPulls: [], claims: [], pulls: [], favorite: null });
 }
 
 export function failGame(message: string): void {
@@ -151,6 +162,15 @@ export const actions = {
     const { data, error } = await supabase.rpc("set_wish", { card: entry.id, wanted });
     if (error) return { error: explain(error.message) };
     set({ entries: withWishes(state.entries, data) });
+    return null;
+  },
+
+  /** Makes an owned fraud the favorite, or clears it with null. Returns why the server refused, if it did. */
+  favorite: async (entry: Entry | null): Promise<{ error: string } | null> => {
+    if (!supabase) return { error: "The game has no server." };
+    const { data, error } = await supabase.rpc("set_favorite", { card: entry?.id ?? null });
+    if (error) return { error: explain(error.message) };
+    set({ favorite: (data as number | null) ?? null });
     return null;
   },
 
