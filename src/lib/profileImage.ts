@@ -73,23 +73,55 @@ export async function drawProfileCard(data: CardData): Promise<Blob> {
   const cy = 95;
   const cw = 330;
   const ch = 440;
+  const rarity = data.favorite?.rarity ?? 0;
   rounded(ctx, cx, cy, cw, ch, 28);
   ctx.fillStyle = data.favorite ? rarityColor : "#1f1f23";
   ctx.fill();
-  if (data.favorite?.rarity === 3) {
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = data.favorite ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.18)";
+  ctx.font = `700 170px ${FONT}`;
+  ctx.fillText(data.favorite ? Array.from(data.favorite.name)[0]!.toUpperCase() : "?", cx + cw / 2, cy + 150);
+
+  // Its nameplate across the foot, edge to edge, the name in its tier's style (dark theme)
+  if (data.favorite) {
+    const px = cx;
+    const pw = cw;
+    const ph = 130;
+    const py = cy + ch - ph;
+    ctx.save();
+    rounded(ctx, cx, cy, cw, ch, 28);
+    ctx.clip();
+    ctx.fillStyle = "rgba(24,24,27,0.94)";
+    ctx.fillRect(px, py, pw, ph);
+    ctx.fillStyle = rarity === 3 ? "#fbbf24" : fade(rarityColor, 0.8);
+    ctx.fillRect(px, py, pw, 4);
+    ctx.restore();
+
+    const style = rarity === 3 ? "italic 700" : rarity === 0 ? "600" : "700";
+    // Shrink long names to fit the plate
+    let size = 44;
+    ctx.font = `${style} ${size}px ${FONT}`;
+    while (size > 24 && ctx.measureText(data.favorite.name).width > pw - 36) ctx.font = `${style} ${(size -= 2)}px ${FONT}`;
+    const shown = fit(ctx, data.favorite.name, pw - 36);
+    const nameY = py + 50;
+    const half = ctx.measureText(shown).width / 2;
+    const across = ctx.createLinearGradient(cx + cw / 2 - half, 0, cx + cw / 2 + half, 0);
+    ["#60a5fa", "#a78bfa", "#f472b6"].forEach((color, i) => across.addColorStop(i / 2, color));
+    const down = ctx.createLinearGradient(0, nameY - size / 2, 0, nameY + size / 2);
+    ["#fef3c7", "#fbbf24", "#d97706"].forEach((color, i) => down.addColorStop([0, 0.55, 1][i]!, color));
+    ctx.fillStyle = ["rgba(255,255,255,0.95)", "#60a5fa", across, down][rarity]!;
+    ctx.fillText(shown, cx + cw / 2, nameY);
+    ctx.fillStyle = gold;
+    ctx.font = `400 26px ${FONT}`;
+    ctx.fillText("★".repeat(rarity + 2), cx + cw / 2, py + ph - 32);
+  }
+  // Legendary's frame goes over the nameplate, unbroken round the card
+  if (rarity === 3) {
     ctx.lineWidth = 6;
     ctx.strokeStyle = "rgba(255,255,255,0.55)";
     rounded(ctx, cx + 3, cy + 3, cw - 6, ch - 6, 25);
     ctx.stroke();
-  }
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = data.favorite ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.18)";
-  ctx.font = `700 190px ${FONT}`;
-  ctx.fillText(data.favorite ? Array.from(data.favorite.name)[0]!.toUpperCase() : "?", cx + cw / 2, cy + ch / 2 - 10);
-  if (data.favorite) {
-    ctx.font = `400 34px ${FONT}`;
-    ctx.fillText("★".repeat(data.favorite.rarity + 2), cx + cw / 2, cy + ch - 46);
   }
 
   // Name and favorite

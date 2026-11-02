@@ -4,9 +4,9 @@ import { formatMoney } from "@/game/format";
 import { fetchProfile } from "@/game/leaderboard";
 import { useGame } from "@/game/store";
 import { cn } from "@/lib/utils";
-import { NameCard } from "./NameCard";
 import { ShareIcon, Stat, rank } from "./Profile";
 import { ProfileCardDialog } from "./ProfileCard";
+import { TierName } from "./Rarity";
 import {
   MIN_PASSWORD_LENGTH,
   USERNAME_PATTERN,
@@ -190,14 +190,6 @@ function SignedIn({ username, discord }: { username: string | null; discord: str
     <div className="flex flex-col gap-6">
       <div className={cn("profile-hero", `r-${favorite?.rarity ?? 0}`, favorite && "has-favorite")}>
         <div className="flex items-center gap-4 sm:gap-5">
-          <div className="w-20 shrink-0 sm:w-24">
-            <NameCard
-              name={favorite?.name ?? null}
-              rarity={favorite?.rarity ?? 0}
-              owned={!!favorite}
-              className={cn(!favorite && "[&_.stars]:hidden")}
-            />
-          </div>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <span className="text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
               Signed in
@@ -206,7 +198,9 @@ function SignedIn({ username, discord }: { username: string | null; discord: str
             <p className="truncate text-sm text-muted-foreground">
               {favorite ? (
                 <>
-                  Favorite · <span className="font-semibold text-foreground">{favorite.name}</span>
+                  Favorite · <span className="font-semibold text-foreground">
+                    <TierName name={favorite.name} rarity={favorite.rarity} />
+                  </span>
                 </>
               ) : (
                 "No favorite yet. Pick one from a fraud's details."

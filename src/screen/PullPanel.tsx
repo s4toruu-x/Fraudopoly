@@ -181,7 +181,6 @@ function PullItem({
           card
         )}
       </button>
-      <p className="truncate text-sm">{entry.name}</p>
       {open ? (
         <Button size="sm" disabled={claiming !== null} onClick={onClaim} className="w-full tabular-nums">
           {claiming === pull.pullId ? "Claiming…" : owned ? `+${formatMoney(pull.reward)} · ${seconds}s` : `Claim · ${seconds}s`}

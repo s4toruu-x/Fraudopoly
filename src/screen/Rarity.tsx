@@ -10,6 +10,11 @@ export function Stars({ rarity, className }: { rarity: number; className?: strin
   );
 }
 
+/** A name written in its rarity's style: plain for Common, up to gold foil for Legendary */
+export function TierName({ name, rarity, className }: { name: string; rarity: number; className?: string }) {
+  return <span className={cn("tier-name", `r-${rarity}`, className)}>{name}</span>;
+}
+
 export function NewTag() {
   return <span className="tag-new">New</span>;
 }

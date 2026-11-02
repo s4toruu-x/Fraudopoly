@@ -117,9 +117,6 @@ export function Encyclopedia({
               >
                 <NameCard name={entry.name} rarity={entry.rarity} owned={entry.count > 0} wished={entry.wished} />
                 <span className="flex min-w-0 flex-col">
-                  <span className={entry.count > 0 ? "truncate text-sm" : "truncate text-sm text-muted-foreground"}>
-                    {entry.name}
-                  </span>
                   <span className="truncate text-xs text-muted-foreground">
                     {entry.category.name ?? entry.category.type}
                   </span>

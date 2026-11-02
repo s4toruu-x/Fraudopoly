@@ -10,7 +10,7 @@ import { actions, useGame } from "@/game/store";
 import { HREF } from "@/lib/route";
 import { cn } from "@/lib/utils";
 import { NameCard } from "./NameCard";
-import { Stars } from "./Rarity";
+import { Stars, TierName } from "./Rarity";
 
 /** Upper bound on waiting for the 0.14s closing animation */
 const CLOSE_FALLBACK_MS = 400;
@@ -83,7 +83,7 @@ export function NameDetails({ entry, rules, entries, owner, onClose }: Props) {
         <div className="flex w-full min-w-0 flex-col gap-4">
           <div className="flex flex-col gap-1 text-center sm:pr-8 sm:text-left">
             <h2 id="details-title" className="text-xl font-semibold [overflow-wrap:anywhere]">
-              {entry.name}
+              {owned ? <TierName name={entry.name} rarity={entry.rarity} /> : entry.name}
             </h2>
             <p className="text-sm text-muted-foreground">
               <Stars rarity={entry.rarity} /> {RARITIES[entry.rarity].name}

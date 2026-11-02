@@ -4,9 +4,8 @@ import { formatAgo, formatCategory, formatMoney } from "@/game/format";
 import type { Entry, FeedPull, Rules } from "@/game/state";
 import { refreshFeed } from "@/game/store";
 import { useNow } from "@/lib/useNow";
-import { NameCard } from "./NameCard";
 import { NameDetails } from "./NameDetails";
-import { Stars } from "./Rarity";
+import { Stars, TierName } from "./Rarity";
 
 const POLL_MS = 20_000;
 
@@ -119,7 +118,6 @@ function List({
                   onClick={() => onOpen(pull.position)}
                   className="row-button flex items-center gap-3 py-1 text-left"
                 >
-                  <NameCard name={pull.name} rarity={pull.rarity} className="w-8 shrink-0 [&_.stars]:hidden" />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-sm">
                       {who && (
@@ -128,7 +126,7 @@ function List({
                           <span className="text-muted-foreground"> claimed </span>
                         </>
                       )}
-                      <span className="font-medium">{pull.name}</span>
+                      <TierName name={pull.name} rarity={pull.rarity} className="font-medium" />
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
                       <Stars rarity={pull.rarity} /> {RARITIES[pull.rarity].name} · {formatCategory(pull.category)}

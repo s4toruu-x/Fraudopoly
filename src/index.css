@@ -546,27 +546,198 @@
         transition: background-color 0.4s;
     }
     .name-card .initial {
-        font-size: 44cqw;
+        /* Centered in the space above the nameplate */
+        margin-bottom: 28cqw;
+        font-size: 40cqw;
         font-weight: 600;
         line-height: 1;
         color: rgb(255 255 255 / 0.95);
     }
-    .name-card .stars {
-        position: absolute;
-        bottom: 7%;
-        font-size: max(9px, 9cqw);
-        color: rgb(255 255 255 / 0.92);
+    .name-card > * {
+        z-index: 1;
+    }
+
+    /* Each tier up gets a richer finish: Rare a gradient, Epic a frame and sheen, Legendary foil and glow */
+    .name-card.r-1 {
+        background: linear-gradient(160deg, color-mix(in srgb, var(--r-bg) 70%, #fff) 0%, var(--r-bg) 55%);
+    }
+    .name-card.r-2 {
+        background:
+            radial-gradient(90% 60% at 50% 0%, rgb(255 255 255 / 0.28), transparent 70%),
+            linear-gradient(160deg, color-mix(in srgb, var(--r-bg) 75%, #ec4899) 0%, var(--r-bg) 60%);
     }
     .name-card.r-3 {
-        box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.55);
+        background:
+            radial-gradient(90% 60% at 50% 0%, rgb(255 255 255 / 0.4), transparent 70%),
+            linear-gradient(150deg, #fde68a 0%, var(--r-bg) 45%, #b45309 100%);
+        box-shadow: 0 0 14px color-mix(in srgb, var(--r-bg) 55%, transparent);
     }
+    /* The frame sits above the nameplate, so it runs unbroken round the card */
+    .name-card.r-2::before,
+    .name-card.r-3::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: inherit;
+        box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.35);
+        pointer-events: none;
+    }
+    .name-card.r-3::before {
+        box-shadow:
+            inset 0 0 0 2px rgb(255 255 255 / 0.6),
+            inset 0 0 0 5px rgb(180 83 9 / 0.35);
+    }
+    .name-card.r-2::after,
+    .name-card.r-3::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.35) 50%, transparent 65%);
+        transform: translateX(-120%);
+        animation: sheen 6s ease-in-out infinite;
+        pointer-events: none;
+    }
+    .name-card.r-3::after {
+        background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.55) 50%, transparent 70%);
+        animation-duration: 3.5s;
+    }
+    @keyframes sheen {
+        0%,
+        55% {
+            transform: translateX(-120%);
+        }
+        100% {
+            transform: translateX(120%);
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .name-card::after {
+            animation: none !important;
+            display: none;
+        }
+    }
+
+    /* The nameplate across the card's foot, edge to edge: the name in its tier's style, on the page's own panel color */
+    .card-plate {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5cqw;
+        padding: 5cqw 7cqw 6cqw;
+        border-top: 2px solid color-mix(in srgb, var(--r-bg) 70%, transparent);
+        background: color-mix(in srgb, var(--panel) 94%, transparent);
+        box-shadow: 0 -2px 8px rgb(0 0 0 / 0.15);
+        text-align: center;
+    }
+    .name-card.r-3 .card-plate {
+        border-top-color: #fbbf24;
+    }
+    .card-plate-name {
+        max-width: 100%;
+        overflow: hidden;
+        font-size: max(10px, 11cqw);
+        line-height: 1.3;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .card-plate .stars {
+        font-size: max(8px, 8cqw);
+        line-height: 1;
+    }
+
+    /* Names written in their rarity's style, in the same colors and sheen as their cards.
+       Rare is tinted, Epic is a gradient, Legendary is gold foil. */
+    .tier-name.r-1,
+    .tier-name.r-2,
+    .tier-name.r-3 {
+        font-weight: 700;
+    }
+    .tier-name.r-1 {
+        color: var(--rarity-1);
+    }
+    .tier-name.r-2,
+    .tier-name.r-3 {
+        /* A sheen layer on top of the fill, swept across like the card's */
+        --sheen: linear-gradient(100deg, transparent 40%, rgb(255 255 255 / 0.75) 50%, transparent 60%);
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+        background-image: var(--sheen), var(--fill);
+        background-size:
+            250% 100%,
+            100% 100%;
+        background-repeat: no-repeat;
+        background-position:
+            150% 0,
+            0 0;
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        animation: name-sheen 6s ease-in-out infinite;
+    }
+    .tier-name.r-2 {
+        --fill: linear-gradient(90deg, var(--rarity-1), var(--rarity-2) 55%, #ec4899);
+    }
+    .tier-name.r-3 {
+        --fill: linear-gradient(180deg, #fde68a 0%, var(--rarity-3) 55%, #b45309 100%);
+        /* Room for the outline, which truncation would clip */
+        padding: 0 0.08em 0.06em;
+        font-style: italic;
+        filter: drop-shadow(0 0.05em 0 rgb(120 53 15 / 0.45));
+        animation-duration: 3.5s;
+    }
+    /* The dark rarity colors are deep for card fills, so text gets lighter tints of them */
+    .dark .tier-name.r-1 {
+        color: #60a5fa;
+    }
+    .dark .tier-name.r-2 {
+        --fill: linear-gradient(90deg, #60a5fa, #a78bfa 55%, #f472b6);
+    }
+    .dark .tier-name.r-3 {
+        --fill: linear-gradient(180deg, #fef3c7 0%, #fbbf24 55%, #d97706 100%);
+    }
+    @keyframes name-sheen {
+        0%,
+        55% {
+            background-position:
+                150% 0,
+                0 0;
+        }
+        100% {
+            background-position:
+                -50% 0,
+                0 0;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .tier-name {
+            animation: none !important;
+        }
+    }
+
     .name-card.missing {
         background: var(--missing);
         box-shadow: none;
     }
+    .name-card.missing::before,
+    .name-card.missing::after {
+        content: none;
+    }
     .name-card.missing .initial,
     .name-card.missing .stars {
         color: var(--missing-foreground);
+    }
+    .name-card.missing .card-plate {
+        border-top-color: var(--border);
+        background: color-mix(in srgb, var(--panel) 55%, transparent);
+        box-shadow: none;
+    }
+    .name-card.missing .card-plate-name {
+        color: var(--muted-foreground);
     }
 
     .flip {

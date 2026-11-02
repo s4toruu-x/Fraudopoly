@@ -10,7 +10,7 @@ import { Encyclopedia } from "./Encyclopedia";
 import { NameCard } from "./NameCard";
 import { NameDetails } from "./NameDetails";
 import { ProfileCardDialog } from "./ProfileCard";
-import { Stars } from "./Rarity";
+import { Stars, TierName } from "./Rarity";
 
 /** How many of their priciest frauds the showcase shows */
 const SHOWCASE_SIZE = 6;
@@ -87,9 +87,6 @@ export function Profile({ username, entries, rules }: { username: string; entrie
 
         <div className={cn("profile-hero", `r-${favorite?.rarity ?? 0}`, favorite && "has-favorite")}>
           <div className="flex items-center gap-4 sm:gap-5">
-            <div className="w-20 shrink-0 sm:w-24">
-              <NameCard name={favorite?.name ?? null} rarity={favorite?.rarity ?? 0} owned={!!favorite} className={cn(!favorite && "[&_.stars]:hidden")} />
-            </div>
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <h2 className="truncate text-2xl font-bold sm:text-3xl">
                 {profile.username}
@@ -98,7 +95,9 @@ export function Profile({ username, entries, rules }: { username: string; entrie
               <p className="truncate text-sm text-muted-foreground">
                 {favorite ? (
                   <>
-                    Favorite · <span className="font-semibold text-foreground">{favorite.name}</span>
+                    Favorite · <span className="font-semibold text-foreground">
+                      <TierName name={favorite.name} rarity={favorite.rarity} />
+                    </span>
                   </>
                 ) : profile.isMe ? (
                   "No favorite yet. Pick one from a fraud's details."
@@ -159,7 +158,6 @@ export function Profile({ username, entries, rules }: { username: string; entrie
                 >
                   <NameCard name={entry.name} rarity={entry.rarity} />
                   <span className="flex min-w-0 flex-col">
-                    <span className="truncate text-sm">{entry.name}</span>
                     {entry.price !== null && (
                       <span className="truncate text-xs text-stars tabular-nums">{formatMoney(entry.price)}</span>
                     )}

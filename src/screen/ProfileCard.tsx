@@ -118,13 +118,7 @@ export function ProfileCard({
         <div className="pc-favorite flex w-32 shrink-0 flex-col gap-2 sm:w-40">
           <NameCard name={fav?.name ?? null} rarity={fav?.rarity ?? 0} owned={!!fav} className={cn(!fav && "[&_.stars]:hidden")} />
           <p className="truncate text-center text-xs text-muted-foreground">
-            {fav ? (
-              <>
-                Favorite · <span className="font-semibold text-foreground">{fav.name}</span>
-              </>
-            ) : (
-              "Pick a favorite from a fraud's details"
-            )}
+            {fav ? "Favorite" : "Pick a favorite from a fraud's details"}
           </p>
         </div>
 

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { NewTag, Stars } from "./Rarity";
+import { NewTag, Stars, TierName } from "./Rarity";
 
 export function NameCard({
   name,
@@ -16,8 +16,9 @@ export function NameCard({
   wished?: boolean;
   className?: string;
 }) {
+  const missing = !name || !owned;
   return (
-    <div className={cn("name-card", `r-${rarity}`, (!name || !owned) && "missing", className)}>
+    <div className={cn("name-card", `r-${rarity}`, missing && "missing", className)}>
       <span aria-hidden className="initial">
         {name ? Array.from(name)[0]?.toUpperCase() : "?"}
       </span>
@@ -27,7 +28,13 @@ export function NameCard({
           ♥
         </span>
       )}
-      <Stars rarity={rarity} />
+      {/* The nameplate across the bottom, like a trading card's name bar */}
+      <span className="card-plate">
+        {name && (
+          <span className="card-plate-name">{missing ? name : <TierName name={name} rarity={rarity} />}</span>
+        )}
+        <Stars rarity={rarity} />
+      </span>
     </div>
   );
 }

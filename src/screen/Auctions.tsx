@@ -8,8 +8,7 @@ import type { Entry } from "@/game/state";
 import { HREF, profileHref } from "@/lib/route";
 import { useNow } from "@/lib/useNow";
 import { cn } from "@/lib/utils";
-import { NameCard } from "./NameCard";
-import { Stars } from "./Rarity";
+import { Stars, TierName } from "./Rarity";
 
 const POLL_MS = 10_000;
 
@@ -108,9 +107,10 @@ export function Auctions({ entries }: { entries: Entry[] }) {
 function Header({ auction }: { auction: Auction }) {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-3">
-      <NameCard name={auction.name} rarity={auction.rarity} className="w-12 shrink-0 [&_.stars]:hidden" />
       <div className="flex min-w-0 flex-col">
-        <span className="truncate font-semibold">{auction.name}</span>
+        <span className="truncate font-semibold">
+          <TierName name={auction.name} rarity={auction.rarity} />
+        </span>
         <span className="truncate text-xs text-muted-foreground">
           <Stars rarity={auction.rarity} /> {RARITIES[auction.rarity].name} · {formatCategory(auction.category)}
         </span>
