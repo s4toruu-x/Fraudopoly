@@ -78,6 +78,10 @@ tables and functions have their own names.
    - `20261111120000_favorite_fraud.sql`: a favorite fraud for the profile
      card. Until it's run, setting a favorite fails and profile cards show
      none.
+   - `20261112120000_collection_slots.sql`: collection slots. Players hold up
+     to 10 frauds, plus 5 per upgrade bought with Fraudbucks; a full
+     collection can't claim, win or trade for new names. Until it's run,
+     there's no limit and the slots don't show.
 3. **Guests.** Under **Authentication > Sign In / Providers**, turn on **Allow
    anonymous sign-ins**. Every visitor without an account plays as an
    anonymous user.

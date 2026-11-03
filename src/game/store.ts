@@ -191,6 +191,18 @@ export const actions = {
     return null;
   },
 
+  /** Buys the next collection slot upgrade. Returns why the server refused, if it did. */
+  upgradeSlots: async (): Promise<{ error: string } | null> => {
+    if (!supabase) return { error: "The game has no server." };
+    const { data, error } = await supabase.rpc("upgrade_slots");
+    if (error) {
+      void refresh();
+      return { error: explain(error.message) };
+    }
+    set({ player: toPlayer(data.player) });
+    return null;
+  },
+
   claim: async (pullId: number): Promise<{ error: string } | null> => {
     if (!supabase) return { error: "The game has no server." };
     const { data, error } = await supabase.rpc("claim", { pull: pullId });

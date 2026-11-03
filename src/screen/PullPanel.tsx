@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { NameCard } from "./NameCard";
 import { NameDetails } from "./NameDetails";
 import { Stars } from "./Rarity";
+import { SlotsFull, isFull } from "./Upgrades";
 
 interface Props {
   player: Player;
@@ -33,6 +34,7 @@ export function PullPanel({ player, rules, entries, pulls }: Props) {
   // Older servers have no claims
   const claims = rules.claimsPerHour > 0;
   const details = entries.find((entry) => entry.position === opened);
+  const full = isFull(player);
   const waiting = pulls.filter((pull) => canClaim(pull, now, claimsLeft)).length;
   // Pulls that can't be claimed any more are only in Your latest pulls
   const shown = claims ? pulls.filter((pull) => pull.claimed || canClaim(pull, now, claimsLeft)) : pulls;
@@ -66,6 +68,7 @@ export function PullPanel({ player, rules, entries, pulls }: Props) {
             {left > 0 && (!claims || claimsLeft > 0)
               ? ` · refills at ${formatClock(player.nextRefill)}`
               : ` · refills in ${formatCountdown(player.nextRefill - now)}`}
+            {player.slots !== null && ` · ${player.slotsUsed}/${player.slots} slots`}
           </p>
         </div>
         <Button size="lg" disabled={left < 1 || pulling} onClick={pull} className="w-full sm:w-44">
@@ -77,6 +80,7 @@ export function PullPanel({ player, rules, entries, pulls }: Props) {
           {error}
         </p>
       )}
+      {full && claims && <SlotsFull player={player} />}
 
       {shown.length === 0 ? (
         <p className="text-sm text-muted-foreground">
@@ -97,6 +101,7 @@ export function PullPanel({ player, rules, entries, pulls }: Props) {
                 now={now}
                 rules={rules}
                 claimsLeft={claimsLeft}
+                full={full}
                 claiming={claiming}
                 onClaim={() => claim(pull.pullId)}
                 onOpen={() => setOpened(entry.position)}
@@ -147,6 +152,7 @@ function PullItem({
   now,
   rules,
   claimsLeft,
+  full,
   claiming,
   onClaim,
   onOpen,
@@ -156,6 +162,8 @@ function PullItem({
   now: number;
   rules: Rules;
   claimsLeft: number;
+  /** The collection has no free slot, so only names they have can be claimed */
+  full: boolean;
   claiming: number | null;
   onClaim: () => void;
   onOpen: () => void;
@@ -182,8 +190,14 @@ function PullItem({
         )}
       </button>
       {open ? (
-        <Button size="sm" disabled={claiming !== null} onClick={onClaim} className="w-full tabular-nums">
-          {claiming === pull.pullId ? "Claiming…" : owned ? `+${formatMoney(pull.reward)} · ${seconds}s` : `Claim · ${seconds}s`}
+        <Button size="sm" disabled={claiming !== null || (full && !owned)} onClick={onClaim} className="w-full tabular-nums">
+          {claiming === pull.pullId
+            ? "Claiming…"
+            : owned
+              ? `+${formatMoney(pull.reward)} · ${seconds}s`
+              : full
+                ? `Full · ${seconds}s`
+                : `Claim · ${seconds}s`}
         </Button>
       ) : (
         <p className={cn("text-xs", pull.claimed ? "font-semibold" : "text-muted-foreground")}>

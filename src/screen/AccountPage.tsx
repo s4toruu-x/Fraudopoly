@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ShareIcon, Stat, rank } from "./Profile";
 import { ProfileCardDialog } from "./ProfileCard";
 import { TierName } from "./Rarity";
+import { Upgrades } from "./Upgrades";
 import {
   MIN_PASSWORD_LENGTH,
   USERNAME_PATTERN,
@@ -74,6 +75,7 @@ export function AccountPage() {
           <p className="text-sm text-muted-foreground">
             Your account came from Discord? <DiscordLink>Sign in with Discord</DiscordLink>
           </p>
+          {game.player && <Upgrades player={game.player} />}
         </>
       )}
       {account.status === "signed-in" && <SignedIn username={account.username} discord={account.discord} />}
@@ -230,6 +232,8 @@ function SignedIn({ username, discord }: { username: string | null; discord: str
         <Stat label="Worth" value={formatMoney(worth)} note={ranks ? rank(ranks.worth) : "…"} money />
         <Stat label="Net worth" value={formatMoney(worth + fraudbucks)} note={ranks ? rank(ranks.netWorth) : "…"} money />
       </dl>
+
+      {game.player && <Upgrades player={game.player} />}
 
       <section aria-labelledby="sign-in-title" className="flex flex-col gap-2">
         <h3 id="sign-in-title" className="text-sm font-semibold text-muted-foreground">

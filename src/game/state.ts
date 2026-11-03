@@ -20,6 +20,12 @@ export interface Player {
   pullsLeft: number;
   claimsLeft: number;
   nextRefill: number;
+  /** How many frauds the player can hold; null on servers without slots */
+  slots: number | null;
+  /** Frauds held, plus ones on the player's own live auctions */
+  slotsUsed: number;
+  /** What the next slot upgrade costs; null at the top or without slots */
+  slotUpgradeCost: number | null;
 }
 
 export interface HourPull {
@@ -71,6 +77,9 @@ export function toPlayer(p: Record<string, unknown>): Player {
     pullsLeft: p.pulls_left as number,
     claimsLeft: (p.claims_left as number | undefined) ?? 0,
     nextRefill: p.next_refill as number,
+    slots: (p.slots as number | undefined) ?? null,
+    slotsUsed: (p.slots_used as number | undefined) ?? 0,
+    slotUpgradeCost: (p.slot_upgrade_cost as number | null | undefined) ?? null,
   };
 }
 
