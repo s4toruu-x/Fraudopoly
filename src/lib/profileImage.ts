@@ -1,5 +1,6 @@
 import { RARITIES } from "@/game/content";
 import { formatMoney } from "@/game/format";
+import { pictureOf } from "@/game/pictures";
 
 // The profile card as a picture to post: 1200x630, the size link previews use.
 
@@ -50,6 +51,18 @@ function fit(ctx: CanvasRenderingContext2D, text: string, width: number): string
   return `${cut}…`;
 }
 
+/** The card's picture, or null without one or if it won't load, so the card falls back to its letter */
+function loadPicture(name: string | null): Promise<HTMLImageElement | null> {
+  const url = pictureOf(name);
+  if (!url) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = url;
+  });
+}
+
 export async function drawProfileCard(data: CardData): Promise<Blob> {
   await Promise.all([document.fonts.load(`700 64px Inter`), document.fonts.load(`500 24px Inter`)]).catch(() => {});
   const canvas = document.createElement("canvas");
@@ -70,18 +83,32 @@ export async function drawProfileCard(data: CardData): Promise<Blob> {
 
   // The favorite card
   const cx = 80;
-  const cy = 95;
+  const cy = 62;
   const cw = 330;
-  const ch = 440;
+  const ch = 495;
   const rarity = data.favorite?.rarity ?? 0;
   rounded(ctx, cx, cy, cw, ch, 28);
   ctx.fillStyle = data.favorite ? rarityColor : "#1f1f23";
   ctx.fill();
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillStyle = data.favorite ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.18)";
-  ctx.font = `700 170px ${FONT}`;
-  ctx.fillText(data.favorite ? Array.from(data.favorite.name)[0]!.toUpperCase() : "?", cx + cw / 2, cy + 150);
+  const picture = await loadPicture(data.favorite?.name ?? null);
+  if (picture) {
+    // Fills the card down to the nameplate, like the cards on the page
+    const artHeight = ch - 130;
+    const scale = Math.max(cw / picture.naturalWidth, artHeight / picture.naturalHeight);
+    const pw = picture.naturalWidth * scale;
+    const ph = picture.naturalHeight * scale;
+    ctx.save();
+    rounded(ctx, cx, cy, cw, ch, 28);
+    ctx.clip();
+    ctx.drawImage(picture, cx + (cw - pw) / 2, cy + (artHeight - ph) / 2, pw, ph);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = data.favorite ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.18)";
+    ctx.font = `700 170px ${FONT}`;
+    ctx.fillText(data.favorite ? Array.from(data.favorite.name)[0]!.toUpperCase() : "?", cx + cw / 2, cy + 180);
+  }
 
   // Its nameplate across the foot, edge to edge, the name in its tier's style (dark theme)
   if (data.favorite) {

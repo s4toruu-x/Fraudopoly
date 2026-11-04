@@ -1,3 +1,4 @@
+import { pictureOf } from "@/game/pictures";
 import { cn } from "@/lib/utils";
 import { NewTag, Stars, TierName } from "./Rarity";
 
@@ -17,11 +18,16 @@ export function NameCard({
   className?: string;
 }) {
   const missing = !name || !owned;
+  const picture = pictureOf(name);
   return (
     <div className={cn("name-card", `r-${rarity}`, missing && "missing", className)}>
-      <span aria-hidden className="initial">
-        {name ? Array.from(name)[0]?.toUpperCase() : "?"}
-      </span>
+      {picture ? (
+        <img src={picture} alt="" draggable={false} className="card-art" />
+      ) : (
+        <span aria-hidden className="initial">
+          {name ? Array.from(name)[0]?.toUpperCase() : "?"}
+        </span>
+      )}
       {isNew && <NewTag />}
       {wished && (
         <span role="img" aria-label="On the wishlist" className="tag-wish">

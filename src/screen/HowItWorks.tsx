@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CURRENCY, RARITIES } from "@/game/content";
+import { PICTURE_CREDITS } from "@/game/credits";
 import { formatChance, formatMoney } from "@/game/format";
 import type { Rules } from "@/game/state";
 import { HREF } from "@/lib/route";
@@ -58,6 +59,10 @@ export function HowItWorks({ rules }: { rules: Rules }) {
           {RARITIES.map((rarity, i) => `${formatMoney(rules.duplicateRewards[i])} for ${rarity.name}`).join(", ")}.
           You can also sell a fraud you own for its price, from its details; it leaves your
           collection, so pulling it again counts as new.
+        </p>
+        <p>
+          Once a day you can collect a free reward of {formatMoney(100)} to {formatMoney(500)} from the
+          pull panel. A new one is ready at midnight on the server's clock (UTC).
         </p>
       </Part>
 
@@ -143,6 +148,34 @@ export function HowItWorks({ rules }: { rules: Rules }) {
           your guest names move into it. You can connect Discord to an account later too. Signing in to
           an account you already have leaves the guest's names behind.
         </p>
+      </Part>
+
+      <Part title="Picture credits">
+        <p>
+          The dinosaur pictures come from Wikimedia Commons. They've been resized and cropped, some had
+          their white backgrounds removed, and each edited version is shared under the same licence as
+          its original.
+        </p>
+        <details>
+          <summary className="cursor-pointer">Who made each picture</summary>
+          <ul className="mt-2 flex flex-col gap-1">
+            {PICTURE_CREDITS.map((credit) => (
+              <li key={credit.name}>
+                <a href={credit.source} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                  {credit.name}
+                </a>{" "}
+                by {credit.artist},{" "}
+                {credit.licenseUrl ? (
+                  <a href={credit.licenseUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                    {credit.license}
+                  </a>
+                ) : (
+                  credit.license
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
       </Part>
     </section>
   );

@@ -539,7 +539,7 @@
         position: relative;
         display: grid;
         place-items: center;
-        aspect-ratio: 3 / 4;
+        aspect-ratio: 2 / 3;
         border-radius: 10px;
         background: var(--r-bg);
         overflow: hidden;
@@ -552,6 +552,22 @@
         font-weight: 600;
         line-height: 1;
         color: rgb(255 255 255 / 0.95);
+    }
+    /* Fills the card down to the nameplate, so the plate doesn't hide any of it */
+    .name-card .card-art {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 34cqw);
+        object-fit: cover;
+        user-select: none;
+    }
+    /* A name you don't have shows its picture dim and blurred, enlarged so the blur doesn't show its edges */
+    .name-card.missing .card-art {
+        filter: grayscale(1) blur(2.5cqw);
+        opacity: 0.35;
+        transform: scale(1.12);
     }
     .name-card > * {
         z-index: 1;

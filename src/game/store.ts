@@ -203,6 +203,19 @@ export const actions = {
     return null;
   },
 
+  /** Collects today's reward. Returns what it paid, or why the server refused. */
+  claimDaily: async (): Promise<{ paid: number } | { error: string }> => {
+    if (!supabase) return { error: "The game has no server." };
+    const { data, error } = await supabase.rpc("claim_daily");
+    if (error) {
+      // Resync, e.g. collected on another device
+      void refresh();
+      return { error: explain(error.message) };
+    }
+    set({ player: toPlayer(data.player) });
+    return { paid: data.paid as number };
+  },
+
   claim: async (pullId: number): Promise<{ error: string } | null> => {
     if (!supabase) return { error: "The game has no server." };
     const { data, error } = await supabase.rpc("claim", { pull: pullId });

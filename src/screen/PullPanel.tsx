@@ -8,6 +8,7 @@ import { actions } from "@/game/store";
 import { HREF } from "@/lib/route";
 import { useNow } from "@/lib/useNow";
 import { cn } from "@/lib/utils";
+import { DailyReward } from "./DailyReward";
 import { NameCard } from "./NameCard";
 import { NameDetails } from "./NameDetails";
 import { Stars } from "./Rarity";
@@ -81,6 +82,7 @@ export function PullPanel({ player, rules, entries, pulls }: Props) {
         </p>
       )}
       {full && claims && <SlotsFull player={player} />}
+      <DailyReward player={player} />
 
       {shown.length === 0 ? (
         <p className="text-sm text-muted-foreground">

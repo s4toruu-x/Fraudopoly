@@ -27,6 +27,7 @@ export interface NameGroup {
 const DISCORD: NameGroup = {
   category: { type: "Discord" },
   names: [
+    { name: "XiaoBing", rarity: "Legendary" },
     // "someone",
     // { name: "the server owner", rarity: "Legendary" },
   ],
@@ -95,5 +96,40 @@ const RANDOM: NameGroup = {
   ],
 };
 
+const TOKYO_REVENGERS: NameGroup = {
+  category: { type: "Anime", name: "Tokyo Revengers" },
+  names: [{ name: "Manjiro", rarity: "Legendary" }],
+};
+
+const DINOSAURS: NameGroup = {
+  category: { type: "Dinosaurs" },
+  names: [
+    { name: "Tyrannosaurus", rarity: "Legendary" },
+    { name: "Spinosaurus", rarity: "Legendary" },
+    { name: "Argentinosaurus", rarity: "Legendary" },
+    { name: "Velociraptor", rarity: "Epic" },
+    { name: "Triceratops", rarity: "Epic" },
+    { name: "Giganotosaurus", rarity: "Epic" },
+    { name: "Allosaurus", rarity: "Epic" },
+    { name: "Carnotaurus", rarity: "Epic" },
+    { name: "Ankylosaurus", rarity: "Epic" },
+    { name: "Brachiosaurus", rarity: "Epic" },
+    { name: "Stegosaurus", rarity: "Rare" },
+    { name: "Diplodocus", rarity: "Rare" },
+    { name: "Parasaurolophus", rarity: "Rare" },
+    { name: "Utahraptor", rarity: "Rare" },
+    { name: "Baryonyx", rarity: "Rare" },
+    { name: "Pachycephalosaurus", rarity: "Rare" },
+    { name: "Iguanodon", rarity: "Common" },
+    { name: "Compsognathus", rarity: "Common" },
+    { name: "Gallimimus", rarity: "Common" },
+    { name: "Dilophosaurus", rarity: "Common" },
+    { name: "Protoceratops", rarity: "Common" },
+    { name: "Oviraptor", rarity: "Common" },
+    { name: "Maiasaura", rarity: "Common" },
+    { name: "Coelophysis", rarity: "Common" },
+  ],
+};
+
 /** Every group, in encyclopedia order (within each rarity). Add new groups here. */
-export const NAME_GROUPS: NameGroup[] = [DISCORD, RANDOM];
+export const NAME_GROUPS: NameGroup[] = [RANDOM, TOKYO_REVENGERS, DINOSAURS, DISCORD];

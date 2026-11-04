@@ -82,6 +82,10 @@ tables and functions have their own names.
      to 10 frauds, plus 5 per upgrade bought with Fraudbucks; a full
      collection can't claim, win or trade for new names. Until it's run,
      there's no limit and the slots don't show.
+   - `20261113120000_gold_rate.sql`: Legendary drops from 2% to 1%, with the
+     other 1% going to Common.
+   - `20261114120000_daily_reward.sql`: the daily reward. Until it's run, the
+     button doesn't show.
 3. **Guests.** Under **Authentication > Sign In / Providers**, turn on **Allow
    anonymous sign-ins**. Every visitor without an account plays as an
    anonymous user.
@@ -187,6 +191,15 @@ matched ignoring case, and a name in two groups counts once, in the first. The
 order of the groups is the encyclopedia's order within each rarity. A name
 taken out of the list leaves the game and every collection.
 
+A name can have a picture: put a file in `src/assets/cards` named after its id,
+which is the name in lower case (`tyrannosaurus.webp`). SVG, PNG, JPG and WebP
+all work. A picture fills the card down to the nameplate, so one about 640x736
+fits best, and anything else gets cropped. It shows on the card and on the profile picture,
+dim and blurred for a player who doesn't have the name yet. Names without one show their first
+letter. Pictures ship with the site, so adding one means deploying again. The
+dinosaurs are from Wikimedia Commons; add a line to `src/game/credits.ts` for
+any picture whose licence asks for a credit, and it shows under "How it works".
+
 ## How it works
 
 - **10 pulls an hour**, one at a time. Pulls refill at minute 00 of every hour
@@ -201,13 +214,18 @@ taken out of the list leaves the game and every collection.
   claimed, no claim left). The server checks the pull is the player's, still
   in time, not claimed, and that the hour's claim is left. The numbers are in
   `claims_per_hour()` and `claim_seconds()` in the claims migration.
-- **Rarities** show as stars: Common ★★ 60%, Rare ★★★ 28%, Epic ★★★★ 10%,
-  Legendary ★★★★★ 2%, then any name of that rarity. A rarity with no names is
+- **Rarities** show as stars: Common ★★ 61%, Rare ★★★ 28%, Epic ★★★★ 10%,
+  Legendary ★★★★★ 1%, then any name of that rarity. A rarity with no names is
   skipped and its chance shared out. Nothing is guaranteed: every pull is just
   the odds. "Rates" in the pull panel shows them. The numbers are in
-  `pulls_per_hour()` and `rarity_chances()` in the first migration.
+  `pulls_per_hour()` in the first migration and `rarity_chances()` in the gold
+  rate migration.
 - **One of each name.** A player either has a name or doesn't; there are no
   copies.
+- **Daily reward.** Once a day a player can collect F$100 to F$500, in steps of
+  5, from the pull panel (`claim_daily`). The server picks the amount, and a new
+  day starts at midnight UTC. The numbers are in `daily_reward_min()` and
+  `daily_reward_max()` in the daily reward migration.
 - **Fraudbucks (F$)**, the game's money. Claiming a name you already have
   doesn't add a copy: it pays F$10, F$25, F$60 or F$200 by rarity instead. A
   new name pays nothing. The balance shows in the header, and the payouts are

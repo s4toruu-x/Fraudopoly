@@ -26,6 +26,8 @@ export interface Player {
   slotsUsed: number;
   /** What the next slot upgrade costs; null at the top or without slots */
   slotUpgradeCost: number | null;
+  /** Null on servers without the daily reward */
+  daily: { ready: boolean; next: number; min: number; max: number } | null;
 }
 
 export interface HourPull {
@@ -80,6 +82,15 @@ export function toPlayer(p: Record<string, unknown>): Player {
     slots: (p.slots as number | undefined) ?? null,
     slotsUsed: (p.slots_used as number | undefined) ?? 0,
     slotUpgradeCost: (p.slot_upgrade_cost as number | null | undefined) ?? null,
+    daily:
+      p.next_daily === undefined
+        ? null
+        : {
+            ready: p.daily_ready as boolean,
+            next: p.next_daily as number,
+            min: p.daily_min as number,
+            max: p.daily_max as number,
+          },
   };
 }
 
