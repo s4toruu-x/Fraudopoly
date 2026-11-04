@@ -28,6 +28,7 @@ const DISCORD: NameGroup = {
   category: { type: "Discord" },
   names: [
     { name: "XiaoBing", rarity: "Legendary" },
+    { name: "Cyclone", rarity: "Legendary", price: 3605 },
     // "someone",
     // { name: "the server owner", rarity: "Legendary" },
   ],
@@ -96,8 +97,9 @@ const RANDOM: NameGroup = {
   ],
 };
 
-const TOKYO_REVENGERS: NameGroup = {
-  category: { type: "Anime", name: "Tokyo Revengers" },
+/** Also from the Discord server; a group of its own to keep the card's place in the encyclopedia. */
+const DISCORD_EARLY: NameGroup = {
+  category: { type: "Discord" },
   names: [{ name: "Manjiro", rarity: "Legendary" }],
 };
 
@@ -131,5 +133,27 @@ const DINOSAURS: NameGroup = {
   ],
 };
 
+const MORE_DINOSAURS: NameGroup = {
+  category: { type: "Dinosaurs" },
+  names: [
+    { name: "Therizinosaurus", rarity: "Legendary" },
+    { name: "Deinonychus", rarity: "Legendary" },
+    { name: "Tarbosaurus", rarity: "Legendary" },
+    { name: "Cryolophosaurus", rarity: "Legendary" },
+    { name: "Yutyrannus", rarity: "Epic" },
+    { name: "Albertosaurus", rarity: "Rare" },
+    { name: "Deinocheirus", rarity: "Rare" },
+    { name: "Styracosaurus", rarity: "Rare" },
+    { name: "Microraptor", rarity: "Rare" },
+    { name: "Majungasaurus", rarity: "Rare" },
+    { name: "Ceratosaurus", rarity: "Common" },
+    { name: "Corythosaurus", rarity: "Common" },
+    { name: "Edmontosaurus", rarity: "Common" },
+    { name: "Kentrosaurus", rarity: "Common" },
+    { name: "Mamenchisaurus", rarity: "Common" },
+    { name: "Psittacosaurus", rarity: "Common" },
+  ],
+};
+
 /** Every group, in encyclopedia order (within each rarity). Add new groups here. */
-export const NAME_GROUPS: NameGroup[] = [RANDOM, TOKYO_REVENGERS, DINOSAURS, DISCORD];
+export const NAME_GROUPS: NameGroup[] = [RANDOM, DISCORD_EARLY, DINOSAURS, DISCORD, MORE_DINOSAURS];
